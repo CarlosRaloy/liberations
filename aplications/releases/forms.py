@@ -25,19 +25,11 @@ DeletePartFormSet = modelformset_factory(DeletePartsModel, form=DeletePartForm, 
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
-    level = forms.ChoiceField(choices=[(0, 'Normal User'), (1, 'Admin User')], label="User Level")
+    level = forms.ChoiceField(choices=[(0, 'Normal User'), (1, 'Admin User')])
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'level']
-
-    def save(self, commit=True):
-        user = super(UserRegistrationForm, self).save(commit=False)
-        user.set_password(self.cleaned_data['password'])
-        if commit:
-            user.save()
-            Profile.objects.create(user=user, level=self.cleaned_data['level'])
-        return user
+        fields = ['username', 'password', 'email', 'first_name', 'last_name']
 
 
 class CustomAuthenticationForm(AuthenticationForm):

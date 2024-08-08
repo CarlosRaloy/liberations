@@ -22,8 +22,8 @@ def solicitudes_list_view(request):
         'solicitudes': solicitudes,
         'release_form': ReleaseForm(),
         'delete_part_form': DeletePartForm(),
-        'delete_part_formset': DeletePartFormSet(queryset=DeletePartsModel.objects.none()),
         'login_form': login_form,
+        'user_registration_form': UserRegistrationForm(),  # Asegúrate de pasar el formulario aquí
     })
 
 
@@ -63,7 +63,6 @@ def edit_solicitud_view(request, pk):
     return render(request, 'edit_solicitud.html', {'form': form})
 
 
-@login_required
 def detail_solicitud_view(request, pk):
     solicitud = get_object_or_404(ReleaseModel, pk=pk)
     partes = DeletePartsModel.objects.filter(id_release=solicitud)
@@ -77,7 +76,7 @@ def detail_solicitud_view(request, pk):
 @login_required
 def register_user_view(request):
     if request.user.profile.level != 1:
-        return redirect('releases:panel')
+        return JsonResponse({'success': False, 'message': 'No tienes permisos para registrar usuarios'}, status=403)
 
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
@@ -85,12 +84,15 @@ def register_user_view(request):
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
             user.save()
-            Profile.objects.create(user=user, level=form.cleaned_data['level'])
-            return redirect('releases:panel')
-    else:
-        form = UserRegistrationForm()
+            profile = Profile.objects.create(user=user, level=form.cleaned_data['level'])
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+    return JsonResponse({'success': False}, status=400)
 
-    return render(request, 'register_user.html', {'form': form})
+def logout_view(request):
+    logout(request)
+    return redirect('releases:panel')
 
 
 def logout_view(request):

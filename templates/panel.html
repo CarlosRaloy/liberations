@@ -72,6 +72,23 @@
             $('#add-more-btn').click(function () {
                 addForm();
             });
+
+            $('#register-user-form').submit(function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "releases:register_user" %}',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        $('#registerUserModal').modal('hide');
+                        location.reload();
+                    },
+                    error: function (response) {
+                        console.log('Error:', response);
+                    }
+                });
+            });
         });
     </script>
 </head>
@@ -80,9 +97,7 @@
     {% if user.is_authenticated %}
         {% if request.user.profile.level == 1 %}
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createSolicitudModal">Crear Solicitud</button>
-            <a href="{% url 'releases:register_user' %}">
-                <button class="btn btn-secondary">Registrar Usuario</button>
-            </a>
+            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#registerUserModal">Registrar Usuario</button>
         {% elif request.user.profile.level == 0 %}
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createSolicitudModal">Crear Solicitud</button>
         {% endif %}
@@ -103,7 +118,7 @@
         {% endif %}
     {% endfor %}
 
-    <!-- Modal -->
+    <!-- Modal para crear solicitud -->
     <div class="modal fade" id="createSolicitudModal" tabindex="-1" aria-labelledby="createSolicitudModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -141,6 +156,27 @@
 
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Enviar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para registrar usuario -->
+    <div class="modal fade" id="registerUserModal" tabindex="-1" aria-labelledby="registerUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registerUserModalLabel">Registrar Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="register-user-form" method="post">
+                        {% csrf_token %}
+                        {{ user_registration_form.as_p }}
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Registrar</button>
                         </div>
                     </form>
                 </div>

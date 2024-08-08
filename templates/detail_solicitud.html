@@ -12,21 +12,28 @@
 
         {% if solicitud.massive_changes %}
             <h3>Productos Excluidos</h3>
-            <ul>
-                {% for parte in partes %}
-                    <li>{{ parte.part }}</li>
-                {% endfor %}
-            </ul>
         {% else %}
             <h3>Se cambia por</h3>
-            <ul>
-                {% for parte in partes %}
-                    <li>{{ parte.part }}</li>
-                {% endfor %}
-            </ul>
         {% endif %}
+        <ul>
+            {% for parte in partes %}
+                <li>{{ parte.part }}</li>
+            {% endfor %}
+        </ul>
 
-        <a href="{% url 'releases:panel' %}" class="btn btn-primary">Volver al Panel</a>
+        <h3>Imágenes</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Antes</h4>
+                <img src="{{ solicitud.before_img }}" class="img-fluid" alt="Imagen Antes">
+            </div>
+            <div class="col-md-6">
+                <h4>Después</h4>
+                <img src="{{ solicitud.after_img }}" class="img-fluid" alt="Imagen Después">
+            </div>
+        </div>
+
+        <a href="{% url 'releases:panel' %}" class="btn btn-primary mt-3">Volver al Panel</a>
     </div>
 </body>
 </html>
