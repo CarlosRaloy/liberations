@@ -7,16 +7,20 @@ from .models import ReleaseModel, DeletePartsModel, Profile
 class ReleaseForm(forms.ModelForm):
     class Meta:
         model = ReleaseModel
-        fields = ['id_user', 'default_code', 'massive_changes', 'before_img', 'after_img']
+        fields = ['default_code', 'massive_changes']
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super(ReleaseForm, self).__init__(*args, **kwargs)
         if user and user.profile.level == 0:
-            self.fields['before_img'].required = False
-            self.fields['after_img'].required = False
-            self.fields.pop('before_img')
-            self.fields.pop('after_img')
+            self.fields.pop('before_img', None)
+            self.fields.pop('after_img', None)
+
+
+class ReleaseEditForm(forms.ModelForm):
+    class Meta:
+        model = ReleaseModel
+        fields = ['default_code', 'massive_changes', 'before_img', 'after_img']
 
 
 class DeletePartForm(forms.ModelForm):

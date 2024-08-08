@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .forms import ReleaseForm, DeletePartForm, UserRegistrationForm, CustomAuthenticationForm
+from .forms import ReleaseForm, ReleaseEditForm, DeletePartForm, UserRegistrationForm, CustomAuthenticationForm
 from .models import ReleaseModel, DeletePartsModel, Profile
 
 
@@ -28,7 +28,9 @@ def create_solicitud_view(request):
         release_form = ReleaseForm(request.POST, user=request.user)
         delete_part_form = DeletePartForm(request.POST)
         if release_form.is_valid() and delete_part_form.is_valid():
-            release = release_form.save()
+            release = release_form.save(commit=False)
+            release.id_user = request.user.profile
+            release.save()
             delete_part = delete_part_form.save(commit=False)
             delete_part.id_release = release
             delete_part.save()
@@ -40,6 +42,22 @@ def create_solicitud_view(request):
         'release_form': release_form,
         'delete_part_form': delete_part_form,
     })
+
+
+@login_required
+def edit_solicitud_view(request, pk):
+    solicitud = get_object_or_404(ReleaseModel, pk=pk)
+    if request.user.profile.level != 1:
+        return redirect('releases:panel')
+
+    if request.method == 'POST':
+        form = ReleaseEditForm(request.POST, instance=solicitud)
+        if form.is_valid():
+            form.save()
+            return redirect('releases:panel')
+    else:
+        form = ReleaseEditForm(instance=solicitud)
+    return render(request, 'edit_solicitud.html', {'form': form})
 
 
 @login_required

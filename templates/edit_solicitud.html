@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Crear Solicitud</title>
+    <title>Editar Solicitud</title>
 </head>
 <body>
-    <h1>Crear Solicitud</h1>
+    <h1>Editar Solicitud</h1>
     <form method="post">
         {% csrf_token %}
-        {{ release_form.as_p }}
-        {{ delete_part_form.as_p }}
-        <button type="submit">Enviar</button>
+        {{ form.as_p }}
+        <button type="submit">Guardar Cambios</button>
     </form>
     <a href="{% url 'releases:panel' %}">Volver al Panel</a>
 </body>
 </html>
-
