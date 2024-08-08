@@ -1,12 +1,14 @@
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
+from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import ReleaseForm, ReleaseEditForm, DeletePartForm, UserRegistrationForm, CustomAuthenticationForm
+from .forms import ReleaseForm, ReleaseEditForm, DeletePartForm, DeletePartFormSet, UserRegistrationForm, CustomAuthenticationForm
 from .models import ReleaseModel, DeletePartsModel, Profile
 
 
 def solicitudes_list_view(request):
     solicitudes = ReleaseModel.objects.all()
+
     if request.method == 'POST' and 'login' in request.POST:
         login_form = CustomAuthenticationForm(data=request.POST)
         if login_form.is_valid():
@@ -16,38 +18,39 @@ def solicitudes_list_view(request):
     else:
         login_form = CustomAuthenticationForm()
 
-    return render(request, 'panel.html', {'solicitudes': solicitudes, 'login_form': login_form})
-
-
-@login_required
-def create_solicitud_view(request):
-    if request.user.profile.level != 1 and request.user.profile.level != 0:
-        return redirect('releases:panel')
-
-    if request.method == 'POST':
-        release_form = ReleaseForm(request.POST, user=request.user)
-        delete_part_form = DeletePartForm(request.POST)
-        if release_form.is_valid() and delete_part_form.is_valid():
-            release = release_form.save(commit=False)
-            release.id_user = request.user.profile
-            release.save()
-            delete_part = delete_part_form.save(commit=False)
-            delete_part.id_release = release
-            delete_part.save()
-            return redirect('releases:panel')
-    else:
-        release_form = ReleaseForm(user=request.user)
-        delete_part_form = DeletePartForm()
-    return render(request, 'create_solicitud.html', {
-        'release_form': release_form,
-        'delete_part_form': delete_part_form,
+    return render(request, 'panel.html', {
+        'solicitudes': solicitudes,
+        'release_form': ReleaseForm(),
+        'delete_part_form': DeletePartForm(),
+        'delete_part_formset': DeletePartFormSet(queryset=DeletePartsModel.objects.none()),
+        'login_form': login_form,
     })
 
 
 @login_required
+def create_solicitud_view(request):
+    if request.method == 'POST':
+        default_code = request.POST.get('default_code')
+        massive_changes = request.POST.get('massive_changes') == 'on'
+        parts = request.POST.getlist('parts[]')
+
+        release = ReleaseModel.objects.create(
+            id_user=request.user.profile,
+            default_code=default_code,
+            massive_changes=massive_changes
+        )
+
+        for part in parts:
+            if part:
+                DeletePartsModel.objects.create(id_release=release, part=part)
+
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False}, status=400)
+
+@login_required
 def edit_solicitud_view(request, pk):
     solicitud = get_object_or_404(ReleaseModel, pk=pk)
-    if request.user.profile.level != 1:
+    if request.user.profile.level != 1:  # Solo los administradores pueden editar
         return redirect('releases:panel')
 
     if request.method == 'POST':

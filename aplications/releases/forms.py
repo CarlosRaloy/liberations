@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import modelformset_factory
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from .models import ReleaseModel, DeletePartsModel, Profile
@@ -9,24 +10,17 @@ class ReleaseForm(forms.ModelForm):
         model = ReleaseModel
         fields = ['default_code', 'massive_changes']
 
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)
-        super(ReleaseForm, self).__init__(*args, **kwargs)
-        if user and user.profile.level == 0:
-            self.fields.pop('before_img', None)
-            self.fields.pop('after_img', None)
-
-
 class ReleaseEditForm(forms.ModelForm):
     class Meta:
         model = ReleaseModel
-        fields = ['default_code', 'massive_changes', 'before_img', 'after_img']
-
+        fields = ['default_code', 'massive_changes', 'before_img', 'after_img']  # Incluye campos adicionales para la edición
 
 class DeletePartForm(forms.ModelForm):
     class Meta:
         model = DeletePartsModel
         fields = ['part']
+
+DeletePartFormSet = modelformset_factory(DeletePartsModel, form=DeletePartForm, extra=1)
 
 
 class UserRegistrationForm(forms.ModelForm):
