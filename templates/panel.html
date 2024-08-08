@@ -1,11 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Panel de Solicitudes</title>
 </head>
 <body>
-    {{ PING }}
-
+    <h1>Panel de Solicitudes</h1>
+    {% if user.is_authenticated %}
+        {% if request.user.profile.level == 1 %}
+            <a href="{% url 'releases:create_solicitud' %}">Crear Solicitud</a>
+            <a href="{% url 'releases:register_user' %}">
+                <button>Registrar Usuario</button>
+            </a>
+        {% elif request.user.profile.level == 0 %}
+            <a href="{% url 'releases:create_solicitud' %}">Crear Solicitud</a>
+        {% endif %}
+        <a href="{% url 'releases:logout' %}">Cerrar Sesión</a>
+    {% else %}
+        <form method="post" action="">
+            {% csrf_token %}
+            {{ login_form.as_p }}
+            <button type="submit" name="login">Iniciar Sesión</button>
+        </form>
+    {% endif %}
+    <hr>
+    {% for i in solicitudes %}
+        {{ i }}<br>
+    {% endfor %}
 </body>
 </html>
