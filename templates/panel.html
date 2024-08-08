@@ -25,6 +25,7 @@
     <hr>
     {% for solicitud in solicitudes %}
         <p>{{ solicitud.default_code }} - {% if solicitud.massive_changes %}Cambio Masivo{% else %}Cambio Directo{% endif %}</p>
+        <a href="{% url 'releases:detail_solicitud' solicitud.id %}">Ver Detalles</a>
         {% if user.is_authenticated and request.user.profile.level == 1 %}
             <a href="{% url 'releases:edit_solicitud' solicitud.id %}">Editar</a>
         {% endif %}

@@ -60,6 +60,11 @@ def edit_solicitud_view(request, pk):
     return render(request, 'edit_solicitud.html', {'form': form})
 
 
+def detail_solicitud_view(request, pk):
+    solicitud = get_object_or_404(ReleaseModel, pk=pk)
+    return render(request, 'detail_solicitud.html', {'solicitud': solicitud})
+
+
 @login_required
 def register_user_view(request):
     if request.user.profile.level != 1:

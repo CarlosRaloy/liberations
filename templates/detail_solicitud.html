@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detalle de Solicitud</title>
+</head>
+<body>
+    <h1>Detalle de Solicitud</h1>
+    <p><strong>Código:</strong> {{ solicitud.default_code }}</p>
+    <p><strong>Cambio Masivo:</strong> {% if solicitud.massive_changes %}Sí{% else %}No{% endif %}</p>
+    <p><strong>Imagen Antes:</strong> <a href="{{ solicitud.before_img }}" target="_blank"><img src="{{ solicitud.before_img }}" alt="Imagen Antes" style="width:200px;height:auto;"></a></p>
+    <p><strong>Imagen Después:</strong> <a href="{{ solicitud.after_img }}" target="_blank"><img src="{{ solicitud.after_img }}" alt="Imagen Después" style="width:200px;height:auto;"></a></p>
+    <a href="{% url 'releases:panel' %}">Volver al Panel</a>
+</body>
+</html>
