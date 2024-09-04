@@ -10,6 +10,7 @@ is massive changes
 class ReleaseModel(models.Model):
     id_user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     default_code = models.CharField(max_length=20)
+    change_code = models.CharField(max_length=20)
     massive_changes = models.BooleanField(default=0)
     before_img = models.URLField(max_length=200)
     after_img = models.URLField(max_length=200)

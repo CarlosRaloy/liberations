@@ -9,14 +9,11 @@
     <script>
         function toggleFields() {
             const massiveChangesCheckbox = document.getElementById('id_massive_changes');
-            const singlePartField = document.getElementById('single-part');
             const multiplePartsFieldset = document.getElementById('multiple-parts-fieldset');
 
             if (massiveChangesCheckbox.checked) {
-                singlePartField.style.display = 'none';
                 multiplePartsFieldset.style.display = 'block';
             } else {
-                singlePartField.style.display = 'block';
                 multiplePartsFieldset.style.display = 'none';
             }
         }
@@ -50,10 +47,13 @@
 
                 const data = {
                     default_code: $('#id_default_code').val(),
+                    change_code: $('#id_change_code').val(),
                     massive_changes: $('#id_massive_changes').is(':checked'),
                     parts: parts,
                     csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
                 };
+
+                console.log(data)
 
                 $.ajax({
                     type: 'POST',
@@ -130,18 +130,18 @@
                     <form id="create-solicitud-form" method="post">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <label for="id_default_code" class="form-label">Default code:</label>
+                            <label for="id_default_code" class="form-label">Num de parte original</label>
                             <input type="text" id="id_default_code" name="default_code" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_change_code" class="form-label">Cambía por</label>
+                            <input type="text" id="id_change_code" name="change_code" class="form-control">
                         </div>
 
                         <div class="mb-3">
                             <input type="checkbox" id="id_massive_changes" name="massive_changes">
                             <label for="id_massive_changes" class="form-label">Massive changes:</label>
-                        </div>
-
-                        <div id="single-part">
-                            <label for="part">Número de Parte a Cambiar</label>
-                            <input type="text" name="parts[]" class="form-control">
                         </div>
 
                         <fieldset id="multiple-parts-fieldset" style="display: none;">

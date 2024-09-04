@@ -7,19 +7,19 @@
 <body>
     <div class="container mt-4">
         <h1>Detalle de Solicitud</h1>
-        <p><strong>Código Predeterminado:</strong> {{ solicitud.default_code }}</p>
-        <p><strong>Cambio Masivo:</strong> {{ solicitud.massive_changes|yesno:"Sí,No" }}</p>
+        <p><strong>Código Original:</strong> {{ solicitud.default_code }}</p>
+        <p><strong>Cambia por:</strong> {{ solicitud.change_code }}</p>
 
-        {% if solicitud.massive_changes %}
+        <p><strong>Cambio Masivo:</strong> {{ solicitud.massive_changes|yesno:"🟢,🔴" }}</p>
+
+        {% if solicitud.massive_changes == True %}
             <h3>Productos Excluidos</h3>
-        {% else %}
-            <h3>Se cambia por</h3>
+            <ul>
+                {% for parte in partes %}
+                    <li>{{ parte.part }}</li>
+                {% endfor %}
+            </ul>
         {% endif %}
-        <ul>
-            {% for parte in partes %}
-                <li>{{ parte.part }}</li>
-            {% endfor %}
-        </ul>
 
         <h3>Imágenes</h3>
         <div class="row">

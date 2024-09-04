@@ -31,12 +31,14 @@ def solicitudes_list_view(request):
 def create_solicitud_view(request):
     if request.method == 'POST':
         default_code = request.POST.get('default_code')
-        massive_changes = request.POST.get('massive_changes') == 'on'
+        change_code = request.POST.get('change_code')
+        massive_changes = request.POST.get('massive_changes') == 'true'
         parts = request.POST.getlist('parts[]')
 
         release = ReleaseModel.objects.create(
             id_user=request.user.profile,
             default_code=default_code,
+            change_code=change_code,
             massive_changes=massive_changes
         )
 

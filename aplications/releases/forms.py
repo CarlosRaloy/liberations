@@ -8,12 +8,12 @@ from .models import ReleaseModel, DeletePartsModel, Profile
 class ReleaseForm(forms.ModelForm):
     class Meta:
         model = ReleaseModel
-        fields = ['default_code', 'massive_changes']
+        fields = ['default_code','change_code', 'massive_changes']
 
 class ReleaseEditForm(forms.ModelForm):
     class Meta:
         model = ReleaseModel
-        fields = ['default_code', 'massive_changes', 'before_img', 'after_img']  # Incluye campos adicionales para la edición
+        fields = ['default_code','change_code', 'massive_changes', 'before_img', 'after_img']  # Incluye campos adicionales para la edición
 
 class DeletePartForm(forms.ModelForm):
     class Meta:
