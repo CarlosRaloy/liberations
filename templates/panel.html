@@ -1,43 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Solicitudes</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Datatables Bootstrap CSS -->
+    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Datatables JS -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
+        // Mostrar/ocultar los campos de partes adicionales
         function toggleFields() {
             const massiveChangesCheckbox = document.getElementById('id_massive_changes');
             const multiplePartsFieldset = document.getElementById('multiple-parts-fieldset');
-
-            if (massiveChangesCheckbox.checked) {
-                multiplePartsFieldset.style.display = 'block';
-            } else {
-                multiplePartsFieldset.style.display = 'none';
-            }
+            multiplePartsFieldset.style.display = massiveChangesCheckbox.checked ? 'block' : 'none';
         }
 
+        // Agregar nuevos campos de partes adicionales
         function addForm() {
             const formContainer = document.getElementById('form-container');
             const newForm = document.createElement('div');
-            newForm.classList.add('form-row');
+            newForm.classList.add('form-row', 'mb-2');
             newForm.innerHTML = `
-                <label for="part">Part:</label>
-                <input type="text" name="parts[]" class="form-control">
+                <input type="text" name="parts[]" class="form-control" placeholder="Parte adicional">
             `;
             formContainer.appendChild(newForm);
         }
 
-        $(document).ready(function () {
+        $(document).ready(function() {
+            // Inicializar DataTables con Bootstrap y en español
+            $('#solicitudes-table').DataTable({
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.11.5/i18n/es_es.json"
+                },
+                responsive: true,
+                lengthChange: false,
+                autoWidth: false
+            });
+
+            // Restablecer el checkbox y mostrar/ocultar los campos correspondientes
             $('#id_massive_changes').prop('checked', false);
             toggleFields();
 
-            $('#id_massive_changes').change(function () {
+            // Escuchar el evento de cambio del checkbox de cambios masivos
+            $('#id_massive_changes').change(function() {
                 toggleFields();
             });
 
-            $('#create-solicitud-form').submit(function (e) {
+            // Enviar solicitud mediante AJAX
+            $('#create-solicitud-form').submit(function(e) {
                 e.preventDefault();
 
                 let parts = [];
@@ -53,132 +80,174 @@
                     csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
                 };
 
-                console.log(data)
-
                 $.ajax({
                     type: 'POST',
                     url: '{% url "releases:create_solicitud" %}',
                     data: data,
-                    success: function (response) {
-                        $('#createSolicitudModal').modal('hide');
-                        location.reload();
+                    success: function(response) {
+                        Swal.fire({
+                            title: 'Éxito',
+                            text: 'La solicitud se ha creado correctamente.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            location.reload();
+                        });
                     },
-                    error: function (response) {
-                        console.log('Error:', response);
+                    error: function(response) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Hubo un problema al crear la solicitud.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
                     }
                 });
             });
 
-            $('#add-more-btn').click(function () {
-                addForm();
-            });
-
-            $('#register-user-form').submit(function (e) {
+            // Enviar registro de usuario mediante AJAX
+            $('#register-user-form').submit(function(e) {
                 e.preventDefault();
 
                 $.ajax({
                     type: 'POST',
                     url: '{% url "releases:register_user" %}',
                     data: $(this).serialize(),
-                    success: function (response) {
-                        $('#registerUserModal').modal('hide');
-                        location.reload();
+                    success: function(response) {
+                        Swal.fire({
+                            title: 'Éxito',
+                            text: 'El usuario se ha registrado correctamente.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            location.reload();
+                        });
                     },
-                    error: function (response) {
-                        console.log('Error:', response);
+                    error: function(response) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Hubo un problema al registrar el usuario.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
                     }
                 });
+            });
+
+            // Agregar más campos de partes adicionales
+            $('#add-more-btn').click(function() {
+                addForm();
             });
         });
     </script>
 </head>
 <body>
-    <h1>Panel de Solicitudes</h1>
-    {% if user.is_authenticated %}
-        {% if request.user.profile.level == 1 %}
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createSolicitudModal">Crear Solicitud</button>
-            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#registerUserModal">Registrar Usuario</button>
-        {% elif request.user.profile.level == 0 %}
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createSolicitudModal">Crear Solicitud</button>
+    <div class="container mt-4">
+        <h1>Panel de Solicitudes</h1>
+        {% if user.is_authenticated %}
+            {% if request.user.profile.level == 1 %}
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createSolicitudModal">Crear Solicitud</button>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#registerUserModal">Registrar Usuario</button>
+            {% elif request.user.profile.level == 0 %}
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createSolicitudModal">Crear Solicitud</button>
+            {% endif %}
+            <a href="{% url 'releases:logout' %}" class="btn btn-danger">Cerrar Sesión</a>
+        {% else %}
+            <form method="post" action="">
+                {% csrf_token %}
+                {{ login_form.as_p }}
+                <button type="submit" name="login" class="btn btn-primary">Iniciar Sesión</button>
+            </form>
         {% endif %}
-        <a href="{% url 'releases:logout' %}" class="btn btn-danger">Cerrar Sesión</a>
-    {% else %}
-        <form method="post" action="">
-            {% csrf_token %}
-            {{ login_form.as_p }}
-            <button type="submit" name="login" class="btn btn-primary">Iniciar Sesión</button>
-        </form>
-    {% endif %}
-    <hr>
-    {% for solicitud in solicitudes %}
-        <p>{{ solicitud.default_code }} - {% if solicitud.massive_changes %}Cambio Masivo{% else %}Cambio Directo{% endif %}</p>
-        <a href="{% url 'releases:detail_solicitud' solicitud.id %}" class="btn btn-info">Ver Detalles</a>
-        {% if user.is_authenticated and request.user.profile.level == 1 %}
-            <a href="{% url 'releases:edit_solicitud' solicitud.id %}" class="btn btn-warning">Editar</a>
-        {% endif %}
-    {% endfor %}
+        <hr>
 
-    <!-- Modal para crear solicitud -->
-    <div class="modal fade" id="createSolicitudModal" tabindex="-1" aria-labelledby="createSolicitudModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createSolicitudModalLabel">Crear Solicitud</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="create-solicitud-form" method="post">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="id_default_code" class="form-label">Num de parte original</label>
-                            <input type="text" id="id_default_code" name="default_code" class="form-control">
-                        </div>
+        <!-- Tabla de Solicitudes -->
+        <table id="solicitudes-table" class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Código Original</th>
+                    <th>Tipo de Cambio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for solicitud in solicitudes %}
+                    <tr>
+                        <td>{{ solicitud.default_code }}</td>
+                        <td>{% if solicitud.massive_changes %}Cambio Masivo{% else %}Cambio Directo{% endif %}</td>
+                        <td>
+                            <a href="{% url 'releases:detail_solicitud' solicitud.id %}" class="btn btn-info">Ver Detalles</a>
+                            {% if user.is_authenticated and request.user.profile.level == 1 %}
+                                <a href="{% url 'releases:edit_solicitud' solicitud.id %}" class="btn btn-warning">Editar</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-                        <div class="mb-3">
-                            <label for="id_change_code" class="form-label">Cambía por</label>
-                            <input type="text" id="id_change_code" name="change_code" class="form-control">
-                        </div>
-
-                        <div class="mb-3">
-                            <input type="checkbox" id="id_massive_changes" name="massive_changes">
-                            <label for="id_massive_changes" class="form-label">Massive changes:</label>
-                        </div>
-
-                        <fieldset id="multiple-parts-fieldset" style="display: none;">
-                            <legend>Números de Parte a Excluir</legend>
-                            <div id="form-container">
-                                <div class="form-row">
-                                    <input type="text" name="parts[]" class="form-control">
-                                </div>
+        <!-- Modal para crear solicitud -->
+        <div class="modal fade" id="createSolicitudModal" tabindex="-1" aria-labelledby="createSolicitudModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createSolicitudModalLabel">Crear Solicitud</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="create-solicitud-form" method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="id_default_code" class="form-label">Num de parte original</label>
+                                <input type="text" id="id_default_code" name="default_code" class="form-control">
                             </div>
-                            <button type="button" id="add-more-btn" class="btn btn-secondary">Agregar más</button>
-                        </fieldset>
 
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Enviar</button>
-                        </div>
-                    </form>
+                            <div class="mb-3">
+                                <label for="id_change_code" class="form-label">Cambiar por</label>
+                                <input type="text" id="id_change_code" name="change_code" class="form-control">
+                            </div>
+
+                            <div class="mb-3">
+                                <input type="checkbox" id="id_massive_changes" name="massive_changes">
+                                <label for="id_massive_changes" class="form-label">Cambios masivos</label>
+                            </div>
+
+                            <fieldset id="multiple-parts-fieldset" style="display: none;">
+                                <legend>Números de Parte a Excluir</legend>
+                                <div id="form-container">
+                                    <div class="form-row mb-2">
+                                        <input type="text" name="parts[]" class="form-control" placeholder="Parte adicional">
+                                    </div>
+                                </div>
+                                <button type="button" id="add-more-btn" class="btn btn-secondary">Agregar más</button>
+                            </fieldset>
+
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Enviar</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Modal para registrar usuario -->
-    <div class="modal fade" id="registerUserModal" tabindex="-1" aria-labelledby="registerUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="registerUserModalLabel">Registrar Usuario</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="register-user-form" method="post">
-                        {% csrf_token %}
-                        {{ user_registration_form.as_p }}
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Registrar</button>
-                        </div>
-                    </form>
+        <!-- Modal para registrar usuario -->
+        <div class="modal fade" id="registerUserModal" tabindex="-1" aria-labelledby="registerUserModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="registerUserModalLabel">Registrar Usuario</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="register-user-form" method="post">
+                            {% csrf_token %}
+                            {{ user_registration_form.as_p }}
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Registrar</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
