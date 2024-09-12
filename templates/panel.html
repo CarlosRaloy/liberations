@@ -30,119 +30,137 @@
 
     <script>
         // Mostrar/ocultar los campos de partes adicionales
-        function toggleFields() {
-            const massiveChangesCheckbox = document.getElementById('id_massive_changes');
-            const multiplePartsFieldset = document.getElementById('multiple-parts-fieldset');
-            multiplePartsFieldset.style.display = massiveChangesCheckbox.checked ? 'block' : 'none';
-        }
+function toggleFields() {
+    const massiveChangesCheckbox = document.getElementById('id_massive_changes');
+    const multiplePartsFieldset = document.getElementById('multiple-parts-fieldset');
+    multiplePartsFieldset.style.display = massiveChangesCheckbox.checked ? 'block' : 'none';
+}
 
-        // Agregar nuevos campos de partes adicionales
-        function addForm() {
-            const formContainer = document.getElementById('form-container');
-            const newForm = document.createElement('div');
-            newForm.classList.add('form-row', 'mb-2');
-            newForm.innerHTML = `
-                <input type="text" name="parts[]" class="form-control" placeholder="Parte adicional">
-            `;
-            formContainer.appendChild(newForm);
-        }
+// Agregar nuevos campos de partes adicionales
+function addForm() {
+    const formContainer = document.getElementById('form-container');
+    const newForm = document.createElement('div');
+    newForm.classList.add('form-row', 'mb-2', 'input-group');
+    newForm.innerHTML = `
+        <input type="text" name="parts[]" class="form-control" placeholder="Parte adicional">
+        <button type="button" class="btn btn-danger remove-part-btn">Eliminar</button>
+    `;
+    formContainer.appendChild(newForm);
 
-        $(document).ready(function() {
-            // Inicializar DataTables con Bootstrap y en español
-            $('#solicitudes-table').DataTable({
-                language: {
-                    url: "//cdn.datatables.net/plug-ins/1.11.5/i18n/es_es.json"
-                },
-                responsive: true,
-                lengthChange: false,
-                autoWidth: false
-            });
+    // Añadir evento de eliminar al nuevo botón creado
+    addRemoveButtonEvent(newForm.querySelector('.remove-part-btn'));
+}
 
-            // Restablecer el checkbox y mostrar/ocultar los campos correspondientes
-            $('#id_massive_changes').prop('checked', false);
-            toggleFields();
+// Eliminar campo adicional
+function addRemoveButtonEvent(button) {
+    button.addEventListener('click', function() {
+        const formRow = this.closest('.form-row');
+        formRow.remove();
+    });
+}
 
-            // Escuchar el evento de cambio del checkbox de cambios masivos
-            $('#id_massive_changes').change(function() {
-                toggleFields();
-            });
+$(document).ready(function() {
+    // Inicializar DataTables con Bootstrap y en español
+    $('#solicitudes-table').DataTable({
+        language: {
+            url: "//cdn.datatables.net/plug-ins/1.11.5/i18n/es_es.json"
+        },
+        responsive: true,
+        lengthChange: false,
+        autoWidth: false
+    });
 
-            // Enviar solicitud mediante AJAX
-            $('#create-solicitud-form').submit(function(e) {
-                e.preventDefault();
+    // Restablecer el checkbox y mostrar/ocultar los campos correspondientes
+    $('#id_massive_changes').prop('checked', false);
+    toggleFields();
 
-                let parts = [];
-                $('input[name="parts[]"]').each(function() {
-                    parts.push($(this).val());
-                });
+    // Escuchar el evento de cambio del checkbox de cambios masivos
+    $('#id_massive_changes').change(function() {
+        toggleFields();
+    });
 
-                const data = {
-                    default_code: $('#id_default_code').val(),
-                    change_code: $('#id_change_code').val(),
-                    massive_changes: $('#id_massive_changes').is(':checked'),
-                    parts: parts,
-                    csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
-                };
+    // Enviar solicitud mediante AJAX
+    $('#create-solicitud-form').submit(function(e) {
+        e.preventDefault();
 
-                $.ajax({
-                    type: 'POST',
-                    url: '{% url "releases:create_solicitud" %}',
-                    data: data,
-                    success: function(response) {
-                        Swal.fire({
-                            title: 'Éxito',
-                            text: 'La solicitud se ha creado correctamente.',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function(response) {
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'Hubo un problema al crear la solicitud.',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                });
-            });
-
-            // Enviar registro de usuario mediante AJAX
-            $('#register-user-form').submit(function(e) {
-                e.preventDefault();
-
-                $.ajax({
-                    type: 'POST',
-                    url: '{% url "releases:register_user" %}',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        Swal.fire({
-                            title: 'Éxito',
-                            text: 'El usuario se ha registrado correctamente.',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function(response) {
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'Hubo un problema al registrar el usuario.',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                });
-            });
-
-            // Agregar más campos de partes adicionales
-            $('#add-more-btn').click(function() {
-                addForm();
-            });
+        let parts = [];
+        $('input[name="parts[]"]').each(function() {
+            parts.push($(this).val());
         });
+
+        const data = {
+            default_code: $('#id_default_code').val(),
+            change_code: $('#id_change_code').val(),
+            massive_changes: $('#id_massive_changes').is(':checked'),
+            parts: parts,
+            csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url "releases:create_solicitud" %}',
+            data: data,
+            success: function(response) {
+                Swal.fire({
+                    title: 'Éxito',
+                    text: 'La solicitud se ha creado correctamente.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function(response) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al crear la solicitud.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+
+    // Enviar registro de usuario mediante AJAX
+    $('#register-user-form').submit(function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url "releases:register_user" %}',
+            data: $(this).serialize(),
+            success: function(response) {
+                Swal.fire({
+                    title: 'Éxito',
+                    text: 'El usuario se ha registrado correctamente.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function(response) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al registrar el usuario.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+
+    // Añadir evento de eliminar para el botón actual de eliminar
+    $('.remove-part-btn').each(function() {
+        addRemoveButtonEvent(this);
+    });
+
+    // Agregar más campos de partes adicionales
+    $('#add-more-btn').click(function() {
+        addForm();
+    });
+});
+
     </script>
 </head>
 <body>
