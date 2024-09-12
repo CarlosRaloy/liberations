@@ -14,10 +14,11 @@ class ReleaseModel(models.Model):
     massive_changes = models.BooleanField(default=0)
     before_img = models.URLField(max_length=200)
     after_img = models.URLField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)  # Fecha de creación
+    updated_at = models.DateTimeField(auto_now=True)  # Fecha de última modificación
 
     def __str__(self):
         return self.default_code
-
 
 class DeletePartsModel(models.Model):
     id_release = models.ForeignKey(ReleaseModel, on_delete=models.CASCADE)
