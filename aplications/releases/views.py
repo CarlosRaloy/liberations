@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import ReleaseForm, ReleaseEditForm, DeletePartForm, DeletePartFormSet, UserRegistrationForm, CustomAuthenticationForm
 from .models import ReleaseModel, DeletePartsModel, Profile
 from datetime import timedelta
+from liberations.emails import email_user
 
 def solicitudes_list_view(request):
     solicitudes = ReleaseModel.objects.all()
@@ -51,11 +52,15 @@ def create_solicitud_view(request):
             massive_changes=massive_changes
         )
 
+        # Enviar el correo con los detalles de la solicitud
+        email_user(default_code, change_code, parts, massive_changes)
+
         for part in parts:
             if part:
                 DeletePartsModel.objects.create(id_release=release, part=part)
 
         return JsonResponse({'success': True})
+
     return JsonResponse({'success': False}, status=400)
 
 
