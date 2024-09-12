@@ -173,7 +173,7 @@
         <th>Fecha de Creación</th>
         <th>Última Modificación</th>
         <th>Tiempo Transcurrido</th> <!-- Nueva columna para el tiempo transcurrido -->
-        <th>Código Original</th>
+        <th>Cambio</th>
         <th>Tipo de Cambio</th>
         <th>Acciones</th>
     </tr>
@@ -186,12 +186,12 @@
         <td>{{ solicitud.updated_at|date:"d/m/Y H:i" }}</td>
         <td>{{ solicitud.time_diff_text }}</td> <!-- Aquí muestra el tiempo transcurrido -->
         <td>
-            {{ solicitud.default_code }}
+            {{ solicitud.default_code }} 🢂 {{ solicitud.change_code }}
             {% if solicitud.before_img or solicitud.after_img %}
                 📷
             {% endif %}
         </td>
-        <td>{% if solicitud.massive_changes %}Cambio Masivo{% else %}Cambio Directo{% endif %}</td>
+        <td>{% if solicitud.massive_changes %}Masivo{% else %}Directo{% endif %}</td>
         <td>
             <a href="{% url 'releases:detail_solicitud' solicitud.id %}" class="btn btn-info">Ver Detalles</a>
             {% if user.is_authenticated and request.user.profile.level == 1 %}

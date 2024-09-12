@@ -78,6 +78,7 @@ th, td {
     background: linear-gradient(145deg, #009fd9, #018ac2);
     border: none;
     color: #fff;
+    font-size: 12px;
 }
 
 .btn-info:hover {
@@ -90,6 +91,7 @@ th, td {
     background: linear-gradient(145deg, #d7883a, #d9bd04);
     border: none;
     color: #fff;
+    font-size: 12px;
 }
 
 .btn-warning:hover {
