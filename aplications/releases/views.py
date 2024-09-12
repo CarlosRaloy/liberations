@@ -4,11 +4,19 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import ReleaseForm, ReleaseEditForm, DeletePartForm, DeletePartFormSet, UserRegistrationForm, CustomAuthenticationForm
 from .models import ReleaseModel, DeletePartsModel, Profile
-
+from datetime import timedelta
 
 def solicitudes_list_view(request):
     solicitudes = ReleaseModel.objects.all()
 
+    # Calcular el tiempo transcurrido entre creación y modificación para cada solicitud
+    for solicitud in solicitudes:
+        time_diff = solicitud.updated_at - solicitud.created_at
+        hours, remainder = divmod(time_diff.total_seconds(), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        solicitud.time_diff_text = f"{int(hours)} hr {int(minutes)} min {int(seconds)} sec"
+
+    # Manejando el inicio de sesión y los formularios como antes
     if request.method == 'POST' and 'login' in request.POST:
         login_form = CustomAuthenticationForm(data=request.POST)
         if login_form.is_valid():
@@ -18,12 +26,13 @@ def solicitudes_list_view(request):
     else:
         login_form = CustomAuthenticationForm()
 
+    # Pasamos las solicitudes con el cálculo de tiempo transcurrido al contexto
     return render(request, 'panel.html', {
         'solicitudes': solicitudes,
         'release_form': ReleaseForm(),
         'delete_part_form': DeletePartForm(),
         'login_form': login_form,
-        'user_registration_form': UserRegistrationForm(),  # Asegúrate de pasar el formulario aquí
+        'user_registration_form': UserRegistrationForm(),
     })
 
 
