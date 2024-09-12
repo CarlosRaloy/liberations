@@ -13,7 +13,7 @@ class ReleaseForm(forms.ModelForm):
 class ReleaseEditForm(forms.ModelForm):
     class Meta:
         model = ReleaseModel
-        fields = ['default_code','change_code', 'massive_changes', 'before_img', 'after_img']  # Incluye campos adicionales para la edición
+        fields = ['default_code', 'change_code', 'massive_changes', 'before_img', 'after_img']
 
 class DeletePartForm(forms.ModelForm):
     class Meta:

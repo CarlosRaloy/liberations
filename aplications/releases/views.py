@@ -49,19 +49,19 @@ def create_solicitud_view(request):
         return JsonResponse({'success': True})
     return JsonResponse({'success': False}, status=400)
 
+
 @login_required
 def edit_solicitud_view(request, pk):
     solicitud = get_object_or_404(ReleaseModel, pk=pk)
-    if request.user.profile.level != 1:  # Solo los administradores pueden editar
-        return redirect('releases:panel')
 
     if request.method == 'POST':
         form = ReleaseEditForm(request.POST, instance=solicitud)
         if form.is_valid():
-            form.save()
-            return redirect('releases:panel')
+            form.save()  # Guardar los cambios
+            return redirect('releases:panel')  # Redirigir al panel
     else:
         form = ReleaseEditForm(instance=solicitud)
+
     return render(request, 'edit_solicitud.html', {'form': form})
 
 
