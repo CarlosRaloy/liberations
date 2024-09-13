@@ -1,0 +1,91 @@
+/* Fondo general */
+body {
+    background-color: #f5f5f7;
+    font-family: 'Arial', sans-serif;
+    padding: 40px; /* Aumenta el padding general para un aspecto más amplio */
+}
+
+/* Título de la página */
+.title_panel {
+    text-align: center;
+    color: #00344f;
+    font-weight: bold;
+    font-size: 36px; /* Título más grande */
+    margin-bottom: 30px;
+    flex-grow: 1; /* Asegura que el título ocupe el espacio restante */
+}
+
+/* Botón "Volver al Panel" con neumorfismo más espectacular */
+.btn-primary {
+    background: linear-gradient(145deg, #007ad9, #018ac2);
+    border: none;
+    border-radius: 12px; /* Botón redondeado */
+    padding: 8px 16px; /* Tamaño del botón más pequeño */
+    font-weight: bold;
+    font-size: 12px; /* Tamaño de la fuente más pequeño */
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1),
+                -2px -2px 10px rgba(255, 255, 255, 0.7); /* Neumorfismo suave */
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(145deg, #064041, #5fc6f1);
+}
+
+.btn-primary:active {
+    transform: scale(0.98); /* Efecto de presión */
+}
+
+/* Contenedor con glassmorfismo */
+.container {
+    background-color: rgba(255, 255, 255, 0.6); /* Mayor transparencia para destacar el glassmorfismo */
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 1200px; /* Aumenta el ancho para hacerlo más espacioso */
+    margin: 0 auto; /* Centra el contenedor */
+    box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.1); /* Sombra más notoria */
+    backdrop-filter: blur(15px); /* Glassmorfismo más pronunciado */
+}
+
+/* Párrafos */
+p {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Productos Excluidos */
+h3 {
+    color: #2eaec4;
+    font-weight: bold;
+    margin-top: 25px;
+    font-size: 24px; /* Título más grande */
+}
+
+/* Lista de productos excluidos */
+ul {
+    list-style-type: disc;
+    margin-left: 40px;
+    padding-left: 20px;
+    color: #444;
+    font-size: 16px;
+}
+
+/* Estilo de las imágenes */
+.img-fluid {
+    border-radius: 15px;
+    box-shadow: 5px 5px 25px rgba(0, 0, 0, 0.1); /* Sombra más fuerte */
+    max-width: 100%;
+    height: auto;
+}
+
+/* Títulos de las imágenes */
+h4 {
+    text-align: center;
+    margin-top: 20px;
+    color: #2eaec4;
+    font-weight: bold;
+    font-size: 22px;
+}

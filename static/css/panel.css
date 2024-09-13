@@ -1,0 +1,127 @@
+/* Fondo general */
+body {
+    background-color: #f5f5f7;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Título del panel */
+.title_panel {
+    text-align: center;
+    color: #2eaec4;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Estilo de la tabla con glassmorfismo suave */
+table {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    box-shadow: 3px 3px 15px rgba(0, 0, 0, 0.05); /* Sombra muy suave */
+    backdrop-filter: blur(8px); /* Menor blur para suavizar el glassmorfismo */
+    border: none;
+}
+
+th, td {
+    text-align: center;
+}
+
+/* Botones redondeados con neumorfismo y colores suaves */
+.btn {
+    border-radius: 15px; /* Botones redondeados */
+    padding: 6px 12px;  /* Botones más pequeños */
+    font-weight: bold;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1),
+                -2px -2px 10px rgba(255, 255, 255, 0.7); /* Neumorfismo suave */
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.btn:active {
+    transform: scale(0.98); /* Efecto de presión */
+}
+
+/* Botón Crear Solicitud */
+.btn-primary {
+    background: linear-gradient(145deg, #007ad9, #018ac2);
+    border: none;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(145deg, #064041, #5fc6f1);
+}
+
+/* Botón Registrar Usuario - más claro y visible */
+.btn-success {
+    background: linear-gradient(145deg, #00263f, #004b69); /* Color más claro y agradable */
+    border: none;
+    color: #ffffff; /* Color del texto más fuerte */
+}
+
+.btn-success:hover {
+    background: linear-gradient(145deg, #001825, #003a59);
+    color: #f0f8ff; /* Cambia a un tono más oscuro en hover */
+}
+
+/* Botón Cerrar Sesión */
+.btn-danger {
+    background: linear-gradient(145deg, #ae2012, #bb3e03);
+    border: none;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(145deg, #bb3e03, #ae2012);
+}
+
+/* Botón Detalles */
+.btn-info {
+    background: linear-gradient(145deg, #009fd9, #018ac2);
+    border: none;
+    color: #fff;
+    font-size: 12px;
+}
+
+.btn-info:hover {
+    background: linear-gradient(145deg, #064041, #5fc6f1);
+    color: #7ae0ff;
+}
+
+/* Botón Editar */
+.btn-warning {
+    background: linear-gradient(145deg, #d7883a, #d9bd04);
+    border: none;
+    color: #fff;
+    font-size: 12px;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(145deg, #ee9b00, #ca6702);
+    color: #fff;
+}
+
+/* Inputs con glassmorfismo más sutil */
+input[type="text"], input[type="search"] {
+    background: rgba(255, 255, 255, 0.4);
+    border: none;
+    border-radius: 12px;
+    box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.1),
+                inset -2px -2px 8px rgba(255, 255, 255, 0.7);
+    padding: 8px;
+    font-size: 14px;
+    color: #444;
+    backdrop-filter: blur(6px); /* Glassmorfismo más sutil */
+}
+
+input[type="text"]:focus, input[type="search"]:focus {
+    outline: none;
+    box-shadow: inset 3px 3px 12px rgba(0, 0, 0, 0.2),
+                inset -3px -3px 12px rgba(255, 255, 255, 0.8);
+}
+
+/* Modal estilo glassmorfismo más suave */
+.modal-content {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(8px);
+    border-radius: 10px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+}
