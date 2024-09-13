@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Solicitud Modificada</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f5f7fa; font-family: Arial, sans-serif;">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 1000px; margin: 40px auto; background-color: #ffffff; border-radius: 20px;">
+        <!-- Header -->
+        <tr>
+            <td align="center" bgcolor="#2193b0" style="padding: 40px 20px; color: white; border-radius: 20px 20px 0 0;">
+                <font face="Arial, sans-serif">
+                    <h1 style="font-size: 28px; margin: 0;">.: Cambios Raloy :.</h1>
+                </font>
+            </td>
+        </tr>
+
+        <!-- Body Content -->
+        <tr>
+            <td align="center" style="padding: 40px 30px;">
+                <font face="Arial, sans-serif">
+                    <h2 style="color: #2193b0; font-size: 32px; margin-bottom: 20px;">✅ ¡Solicitud Modificada!</h2>
+                    <p style="color: #555; line-height: 1.6; margin-bottom: 20px;">
+                        Se ha editado la solicitud con los siguientes detalles:
+                    </p>
+
+                    <!-- Producto Original -->
+                    <p style="font-size: 22px; color: #2193b0;">
+                        🏷️ <strong>Producto Original:</strong>
+                        <span style="color: #555;">{{ default_code }}</span>
+                    </p>
+
+                    <!-- Producto de Cambio -->
+                    <p style="font-size: 22px; color: #ff8c00;">
+                        🔄 <strong>Producto de Cambio:</strong>
+                        <span style="color: #555;">{{ change_code }}</span>
+                    </p>
+
+                    <!-- Tipo de Cambio -->
+                    <p style="font-size: 18px; color: #0076d7;">
+                         <strong>Tipo de cambio:</strong> {%  if massive_changes %} 🛠️ Masivo {% else %} ⚡ Directo {% endif %}
+                    </p>
+
+                    <!-- Imágenes -->
+                    <h3 style="color: #555;">Imágenes</h3>
+                    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 100%;">
+                        <tr>
+                            <td align="center" valign="top" style="padding: 10px;">
+                                <strong>Antes:</strong>
+                                <div style="width: 400px; height: 600px; overflow: hidden; border-radius: 10px;">
+                                    <img src="{{ before_img }}" alt="Imagen Antes" style="width: 100%; height: auto; display: block; max-height: 100%;">
+                                </div>
+                            </td>
+                            <td align="center" valign="top" style="padding: 10px;">
+                                <strong>Después:</strong>
+                                <div style="width: 400px; height: 600px; overflow: hidden; border-radius: 10px;">
+                                    <img src="{{ after_img }}" alt="Imagen Después" style="width: 100%; height: auto; display: block; max-height: 100%;">
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Productos Excluidos -->
+                    {% if parts %}
+                    <p style="font-size: 18px; color: #e74c3c;">
+                        🚫 <strong>Productos Excluidos:</strong>
+                    </p>
+                    <ul style="list-style: none; padding: 0;">
+                        {% for part in parts %}
+                        <li style="font-size: 16px; color: #555;">📦 {{ part }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </font>
+            </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+            <td align="center" bgcolor="#f0f4f7" style="padding: 20px; font-size: 14px; color: #888; border-radius: 0 0 20px 20px;">
+                <font face="Arial, sans-serif">
+                    © 2024 Raloy. Todos los derechos reservados.
+                </font>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import ReleaseForm, ReleaseEditForm, DeletePartForm, DeletePartFormSet, UserRegistrationForm, CustomAuthenticationForm
 from .models import ReleaseModel, DeletePartsModel, Profile
 from datetime import timedelta
-from liberations.emails import email_user
+from liberations.emails import email_user, email_edith
 
 def solicitudes_list_view(request):
     solicitudes = ReleaseModel.objects.all()
@@ -71,7 +71,22 @@ def edit_solicitud_view(request, pk):
     if request.method == 'POST':
         form = ReleaseEditForm(request.POST, instance=solicitud)
         if form.is_valid():
-            form.save()  # Guardar los cambios
+            # Guardar los cambios
+            form.save()
+
+            # Obtener las partes excluidas (si las hay)
+            parts = solicitud.deletepartsmodel_set.all()
+
+            # Llamar a la función para enviar el correo
+            email_edith(
+                solicitud.default_code,
+                solicitud.change_code,
+                solicitud.massive_changes,
+                solicitud.before_img,
+                solicitud.after_img,
+                parts
+            )
+
             return redirect('releases:panel')  # Redirigir al panel
     else:
         form = ReleaseEditForm(instance=solicitud)
