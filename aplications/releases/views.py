@@ -2,10 +2,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import ReleaseForm, ReleaseEditForm, DeletePartForm, DeletePartFormSet, UserRegistrationForm, CustomAuthenticationForm
-from .models import ReleaseModel, DeletePartsModel, Profile
+from .forms import ReleaseForm, ReleaseEditForm, DeletePartForm, DeletePartFormSet, UserRegistrationForm, \
+    CustomAuthenticationForm, ChangesBeforeAndAfterFormSet
+from .models import ReleaseModel, DeletePartsModel, Profile, ChangesBeforeAndAfter
 from datetime import timedelta
 from liberations.emails import email_user, email_edith
+from django.forms import modelformset_factory
+
 
 def solicitudes_list_view(request):
     solicitudes = ReleaseModel.objects.all()
@@ -40,28 +43,49 @@ def solicitudes_list_view(request):
 @login_required
 def create_solicitud_view(request):
     if request.method == 'POST':
+        # Verifica que los campos estén presentes
         default_code = request.POST.get('default_code')
-        change_code = request.POST.get('change_code')
+        change_code = request.POST.get('change_code')  # Este campo ya no es necesario en el modelo
         massive_changes = request.POST.get('massive_changes') == 'true'
         parts = request.POST.getlist('parts[]')
+        before_imgs = request.POST.getlist('before_img[]')
+        after_imgs = request.POST.getlist('after_img[]')
 
-        release = ReleaseModel.objects.create(
-            id_user=request.user.profile,
-            default_code=default_code,
-            change_code=change_code,
-            massive_changes=massive_changes
-        )
+        # Imprimir para depuración
+        print(f"default_code: {default_code}")
+        print(f"massive_changes: {massive_changes}")
+        print(f"parts: {parts}")
+        print(f"before_imgs: {before_imgs}")
+        print(f"after_imgs: {after_imgs}")
 
-        # Enviar el correo con los detalles de la solicitud
-        email_user(default_code, change_code, parts, massive_changes)
+        if default_code:  # Verificar que los campos principales no estén vacíos
+            release = ReleaseModel.objects.create(
+                id_user=request.user.profile,
+                default_code=default_code,
+                massive_changes=massive_changes
+            )
 
-        for part in parts:
-            if part:
-                DeletePartsModel.objects.create(id_release=release, part=part)
+            # Procesar partes
+            for part in parts:
+                if part:
+                    DeletePartsModel.objects.create(id_release=release, part=part)
 
-        return JsonResponse({'success': True})
+            # Procesar imágenes
+            for before_img, after_img in zip(before_imgs, after_imgs):
+                if before_img and after_img:
+                    ChangesBeforeAndAfter.objects.create(
+                        id_release=release,
+                        before_img=before_img,
+                        after_img=after_img
+                    )
 
-    return JsonResponse({'success': False}, status=400)
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'error': 'Datos incompletos'}, status=400)
+
+    return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=400)
+
+
 
 
 @login_required
@@ -120,6 +144,7 @@ def register_user_view(request):
         else:
             return JsonResponse({'success': False, 'errors': form.errors}, status=400)
     return JsonResponse({'success': False}, status=400)
+
 
 def logout_view(request):
     logout(request)
