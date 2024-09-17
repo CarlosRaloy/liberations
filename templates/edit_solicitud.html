@@ -3,51 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✍️ Editar Solicitud - JavaScript y Bootstrap</title>
+    <title>✍️ Editar Solicitud</title>
     {% load static %}
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/edit.css' %}">
+    <style>
+        .img-thumbnail {
+            max-width: 100px; /* Ajusta el tamaño máximo de las imágenes */
+            height: auto; /* Mantener la proporción */
+            display: block;
+            margin: 0 auto; /* Centrar las imágenes */
+        }
+        .table-images th, .table-images td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .btn-save {
+            display: block;
+            width: 100%; /* Hacer el botón grande */
+            font-size: 1.25rem; /* Aumentar el tamaño de la fuente */
+            padding: 15px;
+        }
+    </style>
 </head>
 <body>
     <div class="container edit-container">
         <h1 class="edit-title">✍️ Editar Solicitud</h1>
+
         <form id="edit-form" method="post" novalidate>
             {% csrf_token %}
 
-            <!-- Default Code -->
+            <!-- Default Code (bloqueado) -->
             <div class="mb-3">
                 <label for="id_default_code" class="form-label">Default code:</label>
-                <input type="text" id="id_default_code" name="default_code" class="form-control input-field" value="{{ form.instance.default_code }}">
+                <input type="text" id="id_default_code" name="default_code" class="form-control input-field" value="{{ form.instance.default_code }}" readonly>
             </div>
 
-            <!-- Change Code -->
-            <div class="mb-3">
-                <label for="id_change_code" class="form-label">Change code:</label>
-                <input type="text" id="id_change_code" name="change_code" class="form-control input-field" value="{{ form.instance.change_code }}">
-            </div>
-
-            <!-- Massive Changes Checkbox -->
+            <!-- Massive Changes Checkbox (bloqueado) -->
             <div class="form-check mb-3">
-                <input type="checkbox" id="id_massive_changes" name="massive_changes" class="form-check-input checkbox-field" {% if form.instance.massive_changes %} checked {% endif %}>
+                <input type="checkbox" id="id_massive_changes" name="massive_changes" class="form-check-input checkbox-field" {% if form.instance.massive_changes %} checked {% endif %} disabled>
                 <label class="form-check-label" for="id_massive_changes">Massive changes 💼</label>
             </div>
 
-            <!-- Before Image (solo número) -->
-            <div class="mb-3">
-                <label for="id_before_img" class="form-label">Before img 🖼️:</label>
-                <input type="text" id="id_before_img" name="before_img" class="form-control input-field" value="{{ form.instance.before_img|cut:'https://envasado.raloy.com.mx/eps/'|cut:'.png' }}">
-            </div>
-
-            <!-- After Image (solo número) -->
-            <div class="mb-3">
-                <label for="id_after_img" class="form-label">After img 🖼️:</label>
-                <input type="text" id="id_after_img" name="after_img" class="form-control input-field" value="{{ form.instance.after_img|cut:'https://envasado.raloy.com.mx/eps/'|cut:'.png' }}">
-            </div>
+            <!-- Tabla de Imágenes Antes y Después -->
+            <h3 class="mt-4">Imágenes Antes y Después</h3>
+            <table class="table table-bordered table-images">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Imagen Antes</th>
+                        <th>Imagen Después</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for image in images %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <img src="https://envasado.raloy.com.mx/eps/{{ image.before_img }}.png" alt="Antes" class="img-thumbnail">
+                            <p>M{{ image.before_img }}</p>
+                        </td>
+                        <td>
+                            <img src="https://envasado.raloy.com.mx/eps/{{ image.after_img }}.png" alt="Después" class="img-thumbnail">
+                            <p>M{{ image.after_img }}</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
 
             <!-- Botón Guardar Cambios -->
-            <button type="submit" class="btn btn-primary  btn-savetype="button"">
+            <button type="submit" class="btn btn-primary btn-save mt-4">
                 <span class="emoji">💾</span> Guardar Cambios
             </button>
         </form>
@@ -62,18 +90,5 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- JavaScript para manejar la URL -->
-    <script>
-        document.getElementById('edit-form').addEventListener('submit', function (event) {
-            // Obtener los campos de imagen
-            var beforeImg = document.getElementById('id_before_img');
-            var afterImg = document.getElementById('id_after_img');
-
-            // Transformar el número en URL completa
-            beforeImg.value = 'https://envasado.raloy.com.mx/eps/' + beforeImg.value + '.png';
-            afterImg.value = 'https://envasado.raloy.com.mx/eps/' + afterImg.value + '.png';
-        });
-    </script>
 </body>
 </html>

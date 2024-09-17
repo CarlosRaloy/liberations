@@ -91,31 +91,21 @@ def create_solicitud_view(request):
 @login_required
 def edit_solicitud_view(request, pk):
     solicitud = get_object_or_404(ReleaseModel, pk=pk)
+    images = ChangesBeforeAndAfter.objects.filter(id_release=solicitud)
 
     if request.method == 'POST':
         form = ReleaseEditForm(request.POST, instance=solicitud)
         if form.is_valid():
             # Guardar los cambios
             form.save()
-
-            # Obtener las partes excluidas (si las hay)
-            parts = solicitud.deletepartsmodel_set.all()
-
-            # Llamar a la función para enviar el correo
-            email_edith(
-                solicitud.default_code,
-                solicitud.change_code,
-                solicitud.massive_changes,
-                solicitud.before_img,
-                solicitud.after_img,
-                parts
-            )
-
             return redirect('releases:panel')  # Redirigir al panel
     else:
         form = ReleaseEditForm(instance=solicitud)
 
-    return render(request, 'edit_solicitud.html', {'form': form})
+    return render(request, 'edit_solicitud.html', {
+        'form': form,
+        'images': images,  # Enviar las imágenes al template
+    })
 
 
 def detail_solicitud_view(request, pk):
