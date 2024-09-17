@@ -121,10 +121,12 @@ def edit_solicitud_view(request, pk):
 def detail_solicitud_view(request, pk):
     solicitud = get_object_or_404(ReleaseModel, pk=pk)
     partes = DeletePartsModel.objects.filter(id_release=solicitud)
+    imagenes = ChangesBeforeAndAfter.objects.filter(id_release=solicitud)
 
     return render(request, 'detail_solicitud.html', {
         'solicitud': solicitud,
-        'partes': partes
+        'partes': partes,
+        'imagenes': imagenes
     })
 
 
