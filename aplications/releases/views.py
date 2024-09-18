@@ -86,7 +86,7 @@ def create_solicitud_view(request):
                 )
 
         # Enviar email de confirmación
-        email_options = EmailOptions.objects.filter(option__in=[0, 2]).values_list('user_email', flat=True)
+        email_options = list(EmailOptions.objects.filter(option__in=[0, 2]).values_list('user_email', flat=True))
 
         print(email_options)
         email_user(
@@ -94,7 +94,8 @@ def create_solicitud_view(request):
             parts=parts,
             massive_changes=massive_changes,
             before_imgs=before_imgs,  # Lista de imágenes antes
-            after_imgs=after_imgs  # Lista de imágenes después
+            after_imgs=after_imgs,  # Lista de imágenes después
+            to_emails = email_options
         )
 
         return JsonResponse({'success': True})
@@ -120,12 +121,14 @@ def edit_solicitud_view(request, pk):
             after_images = [image.after_img for image in images]
 
             # Enviar correo después de la edición
+            email_options = list(EmailOptions.objects.filter(option__in=[1, 2]).values_list('user_email', flat=True))
             email_edith(
                 default_code=solicitud.default_code,
                 massive_changes=solicitud.massive_changes,
                 before_images=before_images,
                 after_images=after_images,
-                parts=solicitud.deletepartsmodel_set.all()
+                parts=solicitud.deletepartsmodel_set.all(),
+                to_emails=email_options
             )
 
             return redirect('releases:panel')

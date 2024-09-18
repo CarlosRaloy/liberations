@@ -13,7 +13,7 @@ class EmailThread(threading.Thread):
         self.email.send()
 
 
-def email_user(default_code, parts, massive_changes, before_imgs, after_imgs):
+def email_user(default_code, parts, massive_changes, before_imgs, after_imgs, to_emails):
     # Asegurarse de que las listas de imágenes coincidan
     images = zip(before_imgs, after_imgs)
 
@@ -32,18 +32,22 @@ def email_user(default_code, parts, massive_changes, before_imgs, after_imgs):
     ran_emoji = random.choice(list_emoji)
     ran_comment = random.choice(list_comment)
 
-    email = EmailMultiAlternatives(
-        '{} | {}'.format(ran_emoji, ran_comment),
-        'Es hora de revisar el producto',
-        settings.EMAIL_HOST_USER,
-        ['cgarcia@raloy.com.mx', 'mmartinez@raloy.com.mx']  # Puedes ajustar la lista de destinatarios
-    )
+    try:
+        email = EmailMultiAlternatives(
+            '{} | {}'.format(ran_emoji, ran_comment),
+            'Es hora de revisar el producto',
+            settings.EMAIL_HOST_USER,
+            to_emails
+        )
 
-    email.attach_alternative(content, 'text/html')
-    EmailThread(email).start()
+        email.attach_alternative(content, 'text/html')
+        EmailThread(email).start()
+
+    except Exception as e:
+        print(f"Error al enviar el correo: {e}")
 
 
-def email_edith(default_code, massive_changes, before_images, after_images, parts):
+def email_edith(default_code, massive_changes, before_images, after_images, parts, to_emails):
     # Preparar los datos para el template
     context = {
         'default_code': default_code,
@@ -65,7 +69,7 @@ def email_edith(default_code, massive_changes, before_images, after_images, part
         subject=subject,  # Asunto personalizado
         body='Se ha modificado una solicitud',
         from_email=settings.EMAIL_HOST_USER,
-        to=['cgarcia@raloy.com.mx', 'mmartinez@raloy.com.mx']
+        to=to_emails
     )
 
     # Agregar el contenido HTML
