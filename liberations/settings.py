@@ -13,7 +13,7 @@ SECRET_KEY = "django-insecure-z1!n#wlp2#9dm%vpq)$gn9+&t4^^m6+8l8umj---1vi==efuzo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -101,4 +101,4 @@ EMAIL_HOST='smtp.gmail.com'
 EMAIL_USE_TLS=True
 EMAIL_PORT=587
 EMAIL_HOST_USER="app2@raloy.com.mx"
-EMAIL_HOST_PASSWORD="Raloyti2024.."
+EMAIL_HOST_PASSWORD="Raloyti2024..."

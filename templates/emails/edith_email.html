@@ -3,86 +3,166 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Solicitud Modificada</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            background-color: #2193b0;
+            color: white;
+            padding: 40px 20px;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .content {
+            padding: 20px;
+            text-align: center;
+            color: #555;
+        }
+        .content h2 {
+            color: #2193b0;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        .details {
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        .details p {
+            margin: 10px 0;
+        }
+        .details strong {
+            color: #2193b0;
+        }
+        .images-section {
+            margin: 30px 0;
+        }
+        .images-section h3 {
+            font-size: 24px;
+            color: #0076d7;
+            margin-bottom: 20px;
+        }
+        .images-grid {
+            display: flex;
+            justify-content: space-around;
+        }
+        .image-column {
+            width: 45%;
+        }
+        .image-column h4 {
+            color: #0076d7;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .image-list {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+        .image-list li {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .exclusions {
+            margin-top: 30px;
+            color: #e74c3c;
+        }
+        .exclusions ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .exclusions ul li {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .footer {
+            text-align: center;
+            background-color: #f0f4f7;
+            padding: 20px;
+            font-size: 14px;
+            color: #888;
+            border-radius: 0 0 20px 20px;
+        }
+    </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #f5f7fa; font-family: Arial, sans-serif;">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 1000px; margin: 40px auto; background-color: #ffffff; border-radius: 20px;">
+<body>
+    <div class="container">
         <!-- Header -->
-        <tr>
-            <td align="center" bgcolor="#2193b0" style="padding: 40px 20px; color: white; border-radius: 20px 20px 0 0;">
-                <font face="Arial, sans-serif">
-                    <h1 style="font-size: 28px; margin: 0;">.: Cambios Raloy :.</h1>
-                </font>
-            </td>
-        </tr>
+        <div class="header">
+            <h1>.: Cambios Raloy :.</h1>
+        </div>
 
         <!-- Body Content -->
-        <tr>
-            <td align="center" style="padding: 40px 30px;">
-                <font face="Arial, sans-serif">
-                    <h2 style="color: #2193b0; font-size: 32px; margin-bottom: 20px;">✅ ¡Solicitud Modificada!</h2>
-                    <p style="color: #555; line-height: 1.6; margin-bottom: 20px;">
-                        Se ha editado la solicitud con los siguientes detalles:
-                    </p>
+        <div class="content">
+            <h2>✅ ¡Solicitud Modificada!</h2>
+            <p>Se ha editado la solicitud con los siguientes detalles:</p>
 
-                    <!-- Producto Original -->
-                    <p style="font-size: 22px; color: #2193b0;">
-                        🏷️ <strong>Producto Original:</strong>
-                        <span style="color: #555;">{{ default_code }}</span>
-                    </p>
+            <!-- Detalles del Producto -->
+            <div class="details">
+                <p><strong>Producto Original:</strong> {{ default_code }}</p>
+                <p><strong>Tipo de Cambio:</strong> {% if massive_changes %} 🛠️ Masivo {% else %} ⚡ Directo {% endif %}</p>
+            </div>
 
-                    <!-- Producto de Cambio -->
-                    <p style="font-size: 22px; color: #ff8c00;">
-                        🔄 <strong>Producto de Cambio:</strong>
-                        <span style="color: #555;">{{ change_code }}</span>
-                    </p>
+            <!-- Imágenes Antes y Después -->
+            <div class="images-section">
+                <h3>📷 Imágenes</h3>
+                <div class="images-grid">
+                    <!-- Columna de imágenes antes -->
+                    <div class="image-column">
+                        <h4>Antes:</h4>
+                        <ul class="image-list">
+                            {% for before_img in before_images %}
+                            <li>M{{ before_img }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <!-- Columna de imágenes después -->
+                    <div class="image-column">
+                        <h4>Después:</h4>
+                        <ul class="image-list">
+                            {% for after_img in after_images %}
+                            <li>M{{ after_img }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-                    <!-- Tipo de Cambio -->
-                    <p style="font-size: 18px; color: #0076d7;">
-                         <strong>Tipo de cambio:</strong> {%  if massive_changes %} 🛠️ Masivo {% else %} ⚡ Directo {% endif %}
-                    </p>
-
-                    <!-- Imágenes -->
-                    <h3 style="color: #555;">Imágenes</h3>
-                    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 100%;">
-                        <tr>
-                            <td align="center" valign="top" style="padding: 10px;">
-                                <strong>Antes:</strong>
-                                <div style="width: 400px; height: 600px; overflow: hidden; border-radius: 10px;">
-                                    <img src="{{ before_img }}" alt="Imagen Antes" style="width: 100%; height: auto; display: block; max-height: 100%;">
-                                </div>
-                            </td>
-                            <td align="center" valign="top" style="padding: 10px;">
-                                <strong>Después:</strong>
-                                <div style="width: 400px; height: 600px; overflow: hidden; border-radius: 10px;">
-                                    <img src="{{ after_img }}" alt="Imagen Después" style="width: 100%; height: auto; display: block; max-height: 100%;">
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <!-- Productos Excluidos -->
-                    {% if parts %}
-                    <p style="font-size: 18px; color: #e74c3c;">
-                        🚫 <strong>Productos Excluidos:</strong>
-                    </p>
-                    <ul style="list-style: none; padding: 0;">
-                        {% for part in parts %}
-                        <li style="font-size: 16px; color: #555;">📦 {{ part }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                </font>
-            </td>
-        </tr>
+            <!-- Productos Excluidos -->
+            {% if parts %}
+            <div class="exclusions">
+                <h3>🚫 Productos Excluidos:</h3>
+                <ul>
+                    {% for part in parts %}
+                    <li>📦 {{ part }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
 
         <!-- Footer -->
-        <tr>
-            <td align="center" bgcolor="#f0f4f7" style="padding: 20px; font-size: 14px; color: #888; border-radius: 0 0 20px 20px;">
-                <font face="Arial, sans-serif">
-                    © 2024 Raloy. Todos los derechos reservados.
-                </font>
-            </td>
-        </tr>
-    </table>
+        <div class="footer">
+            © 2024 Raloy. Todos los derechos reservados.
+        </div>
+    </div>
 </body>
 </html>

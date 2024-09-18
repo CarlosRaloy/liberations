@@ -2,18 +2,18 @@ from django import forms
 from django.forms import modelformset_factory
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from .models import ReleaseModel, DeletePartsModel, Profile
+from .models import ReleaseModel, DeletePartsModel, Profile, ChangesBeforeAndAfter
 
 
 class ReleaseForm(forms.ModelForm):
     class Meta:
         model = ReleaseModel
-        fields = ['default_code','change_code', 'massive_changes']
+        fields = ['default_code', 'massive_changes']
 
 class ReleaseEditForm(forms.ModelForm):
     class Meta:
         model = ReleaseModel
-        fields = ['default_code', 'change_code', 'massive_changes', 'before_img', 'after_img']
+        fields = ['default_code', 'massive_changes']
 
 class DeletePartForm(forms.ModelForm):
     class Meta:
@@ -21,6 +21,13 @@ class DeletePartForm(forms.ModelForm):
         fields = ['part']
 
 DeletePartFormSet = modelformset_factory(DeletePartsModel, form=DeletePartForm, extra=1)
+
+class ChangesBeforeAndAfterForm(forms.ModelForm):
+    class Meta:
+        model = ChangesBeforeAndAfter
+        fields = ['before_img', 'after_img']
+
+ChangesBeforeAndAfterFormSet = modelformset_factory(ChangesBeforeAndAfter, form=ChangesBeforeAndAfterForm, extra=1)
 
 
 class UserRegistrationForm(forms.ModelForm):
