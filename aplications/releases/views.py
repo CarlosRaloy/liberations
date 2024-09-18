@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import ReleaseForm, ReleaseEditForm, DeletePartForm, DeletePartFormSet, UserRegistrationForm, \
     CustomAuthenticationForm, ChangesBeforeAndAfterFormSet, EmailOptionsForm
-from .models import ReleaseModel, DeletePartsModel, Profile, ChangesBeforeAndAfter
+from .models import ReleaseModel, DeletePartsModel, Profile, ChangesBeforeAndAfter, EmailOptions
 from datetime import timedelta
 from liberations.emails import email_user, email_edith
 from django.views.decorators.csrf import csrf_exempt
@@ -86,6 +86,9 @@ def create_solicitud_view(request):
                 )
 
         # Enviar email de confirmación
+        email_options = EmailOptions.objects.filter(option__in=[0, 2]).values_list('user_email', flat=True)
+
+        print(email_options)
         email_user(
             default_code=default_code,
             parts=parts,
