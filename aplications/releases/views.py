@@ -51,6 +51,11 @@ def create_solicitud_view(request):
         before_imgs = request.POST.getlist('before_img[]')
         after_imgs = request.POST.getlist('after_img[]')
 
+        # Eliminar la primera "M" o "m" de cada número de parte y de las imágenes
+        parts = [part[1:] if part.lower().startswith('m') else part for part in parts]
+        before_imgs = [img[1:] if img.lower().startswith('m') else img for img in before_imgs]
+        after_imgs = [img[1:] if img.lower().startswith('m') else img for img in after_imgs]
+
         # Imprimir para depuración
         print(f"default_code: {default_code}")
         print(f"massive_changes: {massive_changes}")
