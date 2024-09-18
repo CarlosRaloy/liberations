@@ -145,6 +145,74 @@
                 });
             });
 
+            // Enviar registro de usuario mediante AJAX
+    $('#register-user-form').submit(function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url "releases:register_user" %}',
+            data: $(this).serialize(),
+            success: function(response) {
+                Swal.fire({
+                    title: 'Éxito',
+                    text: 'El usuario se ha registrado correctamente.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function(response) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al registrar el usuario.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+
+
+
+    $('#email-options-form').submit(function(e) {
+    e.preventDefault();
+
+    $.ajax({
+        type: 'POST',
+        url: '{% url "releases:email_options" %}',
+        data: $(this).serialize(),
+        success: function(response) {
+            if (response.success) {
+                Swal.fire({
+                    title: 'Éxito',
+                    text: 'Las opciones de correo han sido configuradas.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload();  // Recargar la página después del éxito
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Hubo un problema al configurar las opciones de correo.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        },
+        error: function(response) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un problema al configurar las opciones de correo.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+});
+
             // Añadir evento de eliminar para los botones de eliminar actuales
             $('.remove-part-btn, .remove-img-btn').each(function() {
                 addRemoveButtonEvent(this);
@@ -160,6 +228,7 @@
                 addImageForm();
             });
         });
+
     </script>
 </head>
 <body>
@@ -169,6 +238,7 @@
             {% if request.user.profile.level == 1 %}
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createSolicitudModal">Crear Solicitud</button>
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#registerUserModal">Registrar Usuario</button>
+                <button type="button" class="btn btn-email" data-bs-toggle="modal" data-bs-target="#emailOptionsModal">Configurar Correo</button>
             {% elif request.user.profile.level == 0 %}
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createSolicitudModal">Crear Solicitud</button>
             {% endif %}
@@ -203,7 +273,7 @@
                     <td>{{ solicitud.updated_at|date:"d/m/Y H:i" }}</td>
                     <td>{{ solicitud.time_diff_text }}</td>
                     <td>
-                        {{ solicitud.default_code }} 🢂 {{ solicitud.change_code }}
+                        {{ solicitud.default_code }}
                         {% if solicitud.before_img or solicitud.after_img %}
                             📷
                         {% endif %}
@@ -221,6 +291,7 @@
         </table>
 
 <!-- Modal para crear solicitud -->
+
 <div class="modal fade" id="createSolicitudModal" tabindex="-1" aria-labelledby="createSolicitudModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -231,6 +302,7 @@
             <div class="modal-body">
                 <form id="create-solicitud-form" method="post">
                     {% csrf_token %}
+
                     <div class="mb-3">
                         <label for="id_default_code" class="form-label">Clave de Producto</label>
                         <input type="text" id="id_default_code" name="default_code" class="form-control" required>
@@ -268,6 +340,39 @@
 
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Enviar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Modal para configurar las opciones de correo -->
+<div class="modal fade" id="emailOptionsModal" tabindex="-1" aria-labelledby="emailOptionsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="emailOptionsModalLabel">Configurar Opciones de Correo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="email-options-form" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="user_email" class="form-label">Correo del Usuario</label>
+                        <input type="email" id="user_email" name="user_email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="option" class="form-label">Cuándo Enviar el Correo</label>
+                        <select id="option" name="option" class="form-select" required>
+                            <option value="0">Al Crear</option>
+                            <option value="1">Al Editar</option>
+                            <option value="2">En Ambos Procesos</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
                     </div>
                 </form>
             </div>

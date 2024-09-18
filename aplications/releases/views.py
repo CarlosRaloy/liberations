@@ -3,10 +3,11 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import ReleaseForm, ReleaseEditForm, DeletePartForm, DeletePartFormSet, UserRegistrationForm, \
-    CustomAuthenticationForm, ChangesBeforeAndAfterFormSet
-from .models import ReleaseModel, DeletePartsModel, Profile, ChangesBeforeAndAfter
+    CustomAuthenticationForm, ChangesBeforeAndAfterFormSet, EmailOptionsForm
+from .models import ReleaseModel, DeletePartsModel, Profile, ChangesBeforeAndAfter, EmailOptions
 from datetime import timedelta
 from liberations.emails import email_user, email_edith
+from django.views.decorators.csrf import csrf_exempt
 from django.forms import modelformset_factory
 
 
@@ -85,12 +86,16 @@ def create_solicitud_view(request):
                 )
 
         # Enviar email de confirmación
+        email_options = list(EmailOptions.objects.filter(option__in=[0, 2]).values_list('user_email', flat=True))
+
+        print(email_options)
         email_user(
             default_code=default_code,
             parts=parts,
             massive_changes=massive_changes,
             before_imgs=before_imgs,  # Lista de imágenes antes
-            after_imgs=after_imgs  # Lista de imágenes después
+            after_imgs=after_imgs,  # Lista de imágenes después
+            to_emails = email_options
         )
 
         return JsonResponse({'success': True})
@@ -116,12 +121,14 @@ def edit_solicitud_view(request, pk):
             after_images = [image.after_img for image in images]
 
             # Enviar correo después de la edición
+            email_options = list(EmailOptions.objects.filter(option__in=[1, 2]).values_list('user_email', flat=True))
             email_edith(
                 default_code=solicitud.default_code,
                 massive_changes=solicitud.massive_changes,
                 before_images=before_images,
                 after_images=after_images,
-                parts=solicitud.deletepartsmodel_set.all()
+                parts=solicitud.deletepartsmodel_set.all(),
+                to_emails=email_options
             )
 
             return redirect('releases:panel')
@@ -147,23 +154,42 @@ def detail_solicitud_view(request, pk):
         'imagenes': imagenes
     })
 
-
 @login_required
 def register_user_view(request):
+    print("Vista alcanzada")  # Verificar si la vista está siendo llamada
+
     if request.user.profile.level != 1:
         return JsonResponse({'success': False, 'message': 'No tienes permisos para registrar usuarios'}, status=403)
 
     if request.method == 'POST':
+        print("Método POST recibido")  # Verificar si llega el POST
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
+            print("Usuario creado, listo para guardar: ", user)  # Verificar si el usuario se crea
             user.save()
             profile = Profile.objects.create(user=user, level=form.cleaned_data['level'])
             return JsonResponse({'success': True})
         else:
+            print("Errores del formulario: ", form.errors)
             return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+
     return JsonResponse({'success': False}, status=400)
+
+@login_required
+def email_options_view(request):
+    if request.method == 'POST':
+        form = EmailOptionsForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+    else:
+        form = EmailOptionsForm()
+    return JsonResponse({'success': False}, status=400)
+
 
 
 def logout_view(request):

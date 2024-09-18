@@ -2,7 +2,7 @@ from django import forms
 from django.forms import modelformset_factory
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from .models import ReleaseModel, DeletePartsModel, Profile, ChangesBeforeAndAfter
+from .models import ReleaseModel, DeletePartsModel, Profile, ChangesBeforeAndAfter, EmailOptions
 
 
 class ReleaseForm(forms.ModelForm):
@@ -42,3 +42,9 @@ class UserRegistrationForm(forms.ModelForm):
 class CustomAuthenticationForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+
+class EmailOptionsForm(forms.ModelForm):
+    class Meta:
+        model = EmailOptions
+        fields = ['user_email', 'option']

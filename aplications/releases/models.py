@@ -32,3 +32,18 @@ class ChangesBeforeAndAfter(models.Model):
 
     def __int__(self):
         return self.id_release
+
+
+""" 
+-----------------------------------------------------------
+    Notes: 
+    nivel 0 =  create / nivel 1 = edith / nivel 2 = both 
+-----------------------------------------------------------
+"""
+
+class EmailOptions(models.Model):
+    user_email = models.CharField(max_length=120)
+    option = models.SmallIntegerField(default = 0)
+
+    def __str__(self):
+        return self.user_email
