@@ -86,6 +86,20 @@ th, td {
     color: #7ae0ff;
 }
 
+
+/* Botón email */
+.btn-email {
+    background: linear-gradient(145deg, #007559, #00cccc);
+    border: none;
+    color: #fff;
+}
+
+.btn-email:hover {
+    background: linear-gradient(145deg, #009378, #ead900);
+    color: #00617e;
+}
+
+
 /* Botón Editar */
 .btn-warning {
     background: linear-gradient(145deg, #d7883a, #d9bd04);

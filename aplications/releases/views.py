@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import ReleaseForm, ReleaseEditForm, DeletePartForm, DeletePartFormSet, UserRegistrationForm, \
-    CustomAuthenticationForm, ChangesBeforeAndAfterFormSet
+    CustomAuthenticationForm, ChangesBeforeAndAfterFormSet, EmailOptionsForm
 from .models import ReleaseModel, DeletePartsModel, Profile, ChangesBeforeAndAfter
 from datetime import timedelta
 from liberations.emails import email_user, email_edith
@@ -169,6 +169,19 @@ def register_user_view(request):
             print("Errores del formulario: ", form.errors)
             return JsonResponse({'success': False, 'errors': form.errors}, status=400)
 
+    return JsonResponse({'success': False}, status=400)
+
+@login_required
+def email_options_view(request):
+    if request.method == 'POST':
+        form = EmailOptionsForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+    else:
+        form = EmailOptionsForm()
     return JsonResponse({'success': False}, status=400)
 
 
