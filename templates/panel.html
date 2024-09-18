@@ -232,7 +232,7 @@
                 <form id="create-solicitud-form" method="post">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="id_default_code" class="form-label">Num de parte original</label>
+                        <label for="id_default_code" class="form-label">Clave de Producto</label>
                         <input type="text" id="id_default_code" name="default_code" class="form-control" required>
                     </div>
 
@@ -242,7 +242,7 @@
                     </div>
 
                     <fieldset id="multiple-parts-fieldset" style="display: none;">
-                        <legend>Números de Parte a Excluir</legend>
+                        <legend>Productos a Excluir (Clave de producto)</legend>
                         <div id="form-container">
                             <div class="form-row mb-2">
                                 <input type="text" name="parts[]" class="form-control" placeholder="Parte adicional">
@@ -252,7 +252,7 @@
                     </fieldset>
 
                     <fieldset>
-                        <legend>Imágenes</legend>
+                        <legend>Numeros de Parte</legend>
                         <div id="image-form-container">
                             <div class="form-row mb-2 d-flex">
                                 <div class="col">
@@ -263,7 +263,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="button" id="add-more-imgs" class="btn btn-secondary">Agregar más Imágenes</button>
+                        <button type="button" id="add-more-imgs" class="btn btn-secondary">Agregar más numeros de parte</button>
                     </fieldset>
 
                     <div class="modal-footer">
