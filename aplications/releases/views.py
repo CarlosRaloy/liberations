@@ -7,6 +7,7 @@ from .forms import ReleaseForm, ReleaseEditForm, DeletePartForm, DeletePartFormS
 from .models import ReleaseModel, DeletePartsModel, Profile, ChangesBeforeAndAfter
 from datetime import timedelta
 from liberations.emails import email_user, email_edith
+from django.views.decorators.csrf import csrf_exempt
 from django.forms import modelformset_factory
 
 
@@ -147,23 +148,29 @@ def detail_solicitud_view(request, pk):
         'imagenes': imagenes
     })
 
-
 @login_required
 def register_user_view(request):
+    print("Vista alcanzada")  # Verificar si la vista está siendo llamada
+
     if request.user.profile.level != 1:
         return JsonResponse({'success': False, 'message': 'No tienes permisos para registrar usuarios'}, status=403)
 
     if request.method == 'POST':
+        print("Método POST recibido")  # Verificar si llega el POST
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
+            print("Usuario creado, listo para guardar: ", user)  # Verificar si el usuario se crea
             user.save()
             profile = Profile.objects.create(user=user, level=form.cleaned_data['level'])
             return JsonResponse({'success': True})
         else:
+            print("Errores del formulario: ", form.errors)
             return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+
     return JsonResponse({'success': False}, status=400)
+
 
 
 def logout_view(request):
