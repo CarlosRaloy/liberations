@@ -77,3 +77,10 @@ def email_edith(default_code, massive_changes, before_images, after_images, part
 
     # Enviar el correo en segundo plano
     EmailThread(email).start()
+
+
+def send_cancel_email(default_code, to_emails):
+    subject = f'Solicitud {default_code} cancelada'
+    message = f'La solicitud con código {default_code} ha sido cancelada.'
+    email = EmailMultiAlternatives(subject, message, settings.EMAIL_HOST_USER, to_emails)
+    EmailThread(email).start()

@@ -1,94 +1,50 @@
-/* Estilos generales del fondo */
 body {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3));
-    backdrop-filter: blur(10px);
+    background-color: #f0f0f3;
     font-family: 'Arial', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
 }
 
-/* Contenedor con glassmorfismo */
 .edit-container {
-    max-width: 600px;
-    padding: 40px;
-    border-radius: 15px;
-    background: rgba(255, 255, 255, 0.6);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    margin: 0 auto;
+    max-width: 800px;
+    padding: 20px;
+    margin: 40px auto;
+    background: #f0f0f3;
+    border-radius: 20px;
+    box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
 }
 
-/* Título */
-.edit-title {
-    font-weight: bold;
-    color: #00344f;
-    margin-bottom: 20px;
+.neumorphic-card {
+    border-radius: 10px;
+    background: #f0f0f3;
+    box-shadow: 5px 5px 20px #d9d9d9, -5px -5px 10px #ffffff;
+    padding: 5px;
+    transition: all 0.2s ease;
 }
 
-/* Inputs con glassmorfismo */
-.input-field {
-    border-radius: 15px;
-    padding: 12px;
-    margin-bottom: 20px;
-    background: rgba(255, 255, 255, 0.4);
-    box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.1), inset -2px -2px 8px rgba(255, 255, 255, 0.7);
-    color: #444;
+.neumorphic-card:hover {
+    box-shadow: inset 10px 10px 30px #d9d9d9, inset -10px -10px 30px #ffffff;
 }
 
-.input-field:focus {
-    outline: none;
-    box-shadow: inset 3px 3px 12px rgba(0, 0, 0, 0.2), inset -3px -3px 12px rgba(255, 255, 255, 0.8);
+.neumorphic-img {
+    max-width: 100px;
+    height: 50px;
 }
 
-/* Checkbox personalizado */
-.checkbox-field {
-    margin-left: 0;
-    width: 20px;
-    height: 20px;
-    border-radius: 5px;
-}
-
-/* Botones redondeados con neumorfismo */
-.btn {
+.btn-save, .btn-danger {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
     border-radius: 12px;
-    padding: 12px 20px;
-    font-weight: bold;
-    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1),
-                -2px -2px 10px rgba(255, 255, 255, 0.7);
-    transition: background-color 0.3s ease, transform 0.2s;
+    margin-bottom: 10px;
+    box-shadow: 3px 3px 6px #bcbcbc, -3px -3px 6px #ffffff;
 }
 
-.btn:active {
-    transform: scale(0.98);
+.btn-save:hover, .btn-danger:hover {
+    box-shadow: inset 3px 3px 6px #bcbcbc, inset -3px -3px 6px #ffffff;
 }
 
-/* Botón Guardar Cambios */
-.btn-save {
-    background: linear-gradient(145deg, #007ad9, #018ac2);
-    color: white;
-    border: none;
-}
-
-.btn-save:hover {
-    background: linear-gradient(145deg, #064041, #5fc6f1);
-}
-
-/* Botón Volver al Panel */
 .btn-back {
-    background: linear-gradient(145deg, #00263f, #004b69);
+    background: #004b69;
     color: white;
-    border: none;
-}
-
-.btn-back:hover {
-    background: linear-gradient(145deg, #001825, #003a59);
-    color: #f0f8ff;
-}
-
-/* Iconos en los botones */
-.emoji {
-    margin-right: 8px;
+    padding: 10px;
+    border-radius: 12px;
 }

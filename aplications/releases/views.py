@@ -6,7 +6,7 @@ from .forms import ReleaseForm, ReleaseEditForm, DeletePartForm, DeletePartFormS
     CustomAuthenticationForm, ChangesBeforeAndAfterFormSet, EmailOptionsForm
 from .models import ReleaseModel, DeletePartsModel, Profile, ChangesBeforeAndAfter, EmailOptions
 from datetime import timedelta
-from liberations.emails import email_user, email_edith
+from liberations.emails import email_user, email_edith, send_cancel_email
 from django.views.decorators.csrf import csrf_exempt
 from django.forms import modelformset_factory
 
@@ -117,34 +117,55 @@ def edit_solicitud_view(request, pk):
     images = ChangesBeforeAndAfter.objects.filter(id_release=solicitud)
 
     if request.method == 'POST':
-        form = ReleaseEditForm(request.POST, instance=solicitud)
-        if form.is_valid():
-            form.save()
+        # Verificar la acción (guardar o cancelar)
+        action = request.POST.get('action')
 
-            # Recoger los nombres de las imágenes
-            before_images = [image.before_img for image in images]
-            after_images = [image.after_img for image in images]
+        # Obtener los correos electrónicos de los usuarios a notificar
+        email_options = list(EmailOptions.objects.filter(option__in=[1, 2]).values_list('user_email', flat=True))
 
-            # Enviar correo después de la edición
-            email_options = list(EmailOptions.objects.filter(option__in=[1, 2]).values_list('user_email', flat=True))
-            email_edith(
-                default_code=solicitud.default_code,
-                massive_changes=solicitud.massive_changes,
-                before_images=before_images,
-                after_images=after_images,
-                parts=solicitud.deletepartsmodel_set.all(),
-                to_emails=email_options
-            )
+        # Si se guardan los cambios
+        if action == 'save_changes':
+            form = ReleaseEditForm(request.POST, instance=solicitud)
+            if form.is_valid():
+                solicitud = form.save(commit=False)
+                solicitud.drop = 2  # Estado "cerrado"
+                solicitud.save()
+
+                # Preparar las imágenes antes y después para el correo
+                before_images = [image.before_img for image in images]
+                after_images = [image.after_img for image in images]
+
+                # Enviar correo de confirmación de edición
+                email_edith(
+                    default_code=solicitud.default_code,
+                    massive_changes=solicitud.massive_changes,
+                    before_images=before_images,
+                    after_images=after_images,
+                    parts=solicitud.deletepartsmodel_set.all(),
+                    to_emails=email_options
+                )
+
+                return redirect('releases:panel')
+            else:
+                print(form.errors)
+
+        # Si se cancela la solicitud
+        elif action == 'cancel_request':
+            solicitud.drop = 1  # Estado "cancelado"
+            solicitud.save()
+
+            # Enviar correo de cancelación
+            send_cancel_email(default_code=solicitud.default_code, to_emails=email_options)
 
             return redirect('releases:panel')
+
     else:
         form = ReleaseEditForm(instance=solicitud)
 
     return render(request, 'edit_solicitud.html', {
         'form': form,
-        'images': images,  # Enviar las imágenes al template
+        'images': images,
     })
-
 
 
 

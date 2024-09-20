@@ -4,11 +4,14 @@ from aplications.users.models import Profile
 """
 Notes: Massive changes the boolean 0 is direct and number 1
 is massive changes
+
+Notes: Drop is the logic in the table, number 0 is normal, the number 1 is cancel, and number 2 the requirement is close 
 """
 
 
 class ReleaseModel(models.Model):
     id_user = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    drop = models.SmallIntegerField(default=0)
     default_code = models.CharField(max_length=20)
     massive_changes = models.BooleanField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)  # Fecha de creación

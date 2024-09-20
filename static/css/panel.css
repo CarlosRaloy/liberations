@@ -7,9 +7,9 @@ body {
 /* Título del panel */
 .title_panel {
     text-align: center;
-    color: #2eaec4;
+    color: #00374d;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
 }
 
 /* Estilo de la tabla con glassmorfismo suave */
