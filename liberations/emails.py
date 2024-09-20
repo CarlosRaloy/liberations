@@ -13,11 +13,12 @@ class EmailThread(threading.Thread):
         self.email.send()
 
 
-def email_user(default_code, parts, massive_changes, before_imgs, after_imgs, to_emails):
+def email_user(solicitud_id,default_code, parts, massive_changes, before_imgs, after_imgs, to_emails):
     # Asegurarse de que las listas de imágenes coincidan
     images = zip(before_imgs, after_imgs)
 
     context = {
+        'solicitud_id': solicitud_id,
         'default_code': default_code,
         'parts': parts,
         'massive_changes': massive_changes,
@@ -34,8 +35,8 @@ def email_user(default_code, parts, massive_changes, before_imgs, after_imgs, to
 
     try:
         email = EmailMultiAlternatives(
-            '{} | {}'.format(ran_emoji, ran_comment),
-            'Es hora de revisar el producto',
+            '{} | {} | Ticket Num: {}'.format(ran_emoji, ran_comment, solicitud_id),
+            'Es hora de revisar el producto con ID {}'.format(solicitud_id),
             settings.EMAIL_HOST_USER,
             to_emails
         )
@@ -47,7 +48,7 @@ def email_user(default_code, parts, massive_changes, before_imgs, after_imgs, to
         print(f"Error al enviar el correo: {e}")
 
 
-def email_edith(default_code, massive_changes, before_images, after_images, parts, to_emails):
+def email_edith(solicitud_id,default_code, massive_changes, before_images, after_images, parts, to_emails):
     # Preparar los datos para el template
     context = {
         'default_code': default_code,
@@ -55,6 +56,7 @@ def email_edith(default_code, massive_changes, before_images, after_images, part
         'before_images': before_images,  # Pasar lista de imágenes 'antes'
         'after_images': after_images,  # Pasar lista de imágenes 'después'
         'parts': parts if parts else None,
+        'solicitud_id': solicitud_id
     }
 
     # Cargar el contenido del template de email
@@ -62,12 +64,12 @@ def email_edith(default_code, massive_changes, before_images, after_images, part
     content = template.render(context)
 
     # Asunto personalizado
-    subject = f'🚀 Solicitud modificada | {default_code}'
+    subject = f'🚀 Ticket: {solicitud_id} Solicitud modificada | {default_code}'
 
     # Crear y configurar el email
     email = EmailMultiAlternatives(
         subject=subject,  # Asunto personalizado
-        body='Se ha modificado una solicitud',
+        body=f'Se ha modificado la solicitud con ID: {solicitud_id}',
         from_email=settings.EMAIL_HOST_USER,
         to=to_emails
     )
@@ -79,8 +81,8 @@ def email_edith(default_code, massive_changes, before_images, after_images, part
     EmailThread(email).start()
 
 
-def send_cancel_email(default_code, to_emails):
-    subject = f'Solicitud {default_code} cancelada'
-    message = f'La solicitud con código {default_code} ha sido cancelada.'
+def send_cancel_email(solicitud_id, default_code, to_emails):
+    subject = f'Ticket {solicitud_id} cancelada | {default_code}'
+    message = f'La solicitud con ID {solicitud_id} y código {default_code} ha sido cancelada.'
     email = EmailMultiAlternatives(subject, message, settings.EMAIL_HOST_USER, to_emails)
     EmailThread(email).start()

@@ -100,6 +100,7 @@ def create_solicitud_view(request):
 
         print(email_options)
         email_user(
+            solicitud_id=release.id,
             default_code=default_code,
             parts=parts,
             massive_changes=massive_changes,
@@ -142,6 +143,7 @@ def edit_solicitud_view(request, pk):
 
                 # Enviar correo de confirmación de edición
                 email_edith(
+                    solicitud_id=solicitud.id,
                     default_code=solicitud.default_code,
                     massive_changes=solicitud.massive_changes,
                     before_images=before_images,
@@ -160,7 +162,7 @@ def edit_solicitud_view(request, pk):
             solicitud.save()
 
             # Enviar correo de cancelación
-            send_cancel_email(default_code=solicitud.default_code, to_emails=email_options)
+            send_cancel_email(solicitud_id=solicitud.id, default_code=solicitud.default_code, to_emails=email_options)
 
             return redirect('releases:panel')
 
