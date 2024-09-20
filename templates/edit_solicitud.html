@@ -11,30 +11,34 @@
 </head>
 <body>
 
-    <div class="container edit-container">
-        <h1 class="edit-title">✍️ Editar Solicitud</h1>
+<div class="container edit-container">
+    <h1 class="edit-title">✍️ Editar Solicitud</h1>
 
-        <form id="edit-form" method="post">
-            {% csrf_token %}
+    <form id="edit-form" method="post">
+        {% csrf_token %}
 
-            <div class="mb-3">
-                <label for="id_default_code" class="form-label">Default code:</label>
-                <input type="text" id="id_default_code" name="default_code" class="form-control" value="{{ form.instance.default_code }}" readonly>
-            </div>
+        <div class="mb-3">
+            <label for="id_default_code" class="form-label">Default code:</label>
+            <input type="text" id="id_default_code" name="default_code" class="form-control"
+                   value="{{ form.instance.default_code }}" readonly>
+        </div>
 
-            <div class="form-check mb-3">
-                <input type="checkbox" id="id_massive_changes" name="massive_changes" class="form-check-input" {% if form.instance.massive_changes %} checked {% endif %} disabled>
-                <label class="form-check-label" for="id_massive_changes">Massive changes 💼</label>
-            </div>
+        <div class="form-check mb-3">
+            <input type="checkbox" id="id_massive_changes" name="massive_changes" class="form-check-input"
+                    {% if form.instance.massive_changes %} checked {% endif %} disabled>
+            <label class="form-check-label" for="id_massive_changes">Massive changes 💼</label>
+        </div>
 
-            <h3>Imágenes Antes y Después</h3>
-            <div class="row g-4"> <!-- Espacio entre las filas con g-4 -->
-                {% for image in images %}
+        <h3>Imágenes Antes y Después</h3>
+        <div class="row g-4"> <!-- Espacio entre las filas con g-4 -->
+            {% for image in images %}
                 <div class="col-6"> <!-- Aquí ajustamos para mostrar 2 por fila -->
                     <div class="card neumorphic-card">
                         <div class="card-body text-center">
                             <h5 class="card-title">M{{ image.before_img }}</h5>
-                            <img src="https://envasado.raloy.com.mx/eps/{{ image.before_img }}.png" class="img-fluid neumorphic-img" alt="Imagen Antes">
+                            <img src="https://envasado.raloy.com.mx/eps/{{ image.before_img }}.png"
+                                 class="img-fluid neumorphic-img" alt="Imagen Antes"
+                                 onclick="showImageModal('https://envasado.raloy.com.mx/eps/{{ image.before_img }}.png')">
                         </div>
                     </div>
                 </div>
@@ -42,34 +46,73 @@
                 <div class="col-6">
                     <div class="card neumorphic-card">
                         <div class="card-body text-center">
-                            <h5 class="card-title">{{ image.after_img }}</h5>
-                            <img src="https://envasado.raloy.com.mx/eps/{{ image.after_img }}.png" class="img-fluid neumorphic-img" alt="Imagen Después">
+                            <h5 class="card-title">M{{ image.after_img }}</h5>
+                            <img src="https://envasado.raloy.com.mx/eps/{{ image.after_img }}.png"
+                                 class="img-fluid neumorphic-img" alt="Imagen Después"
+                                 onclick="showImageModal('https://envasado.raloy.com.mx/eps/{{ image.after_img }}.png')">
                         </div>
                     </div>
                 </div>
-                {% endfor %}
+            {% endfor %}
+        </div>
+
+        <!-- Botones para Guardar y Cancelar -->
+        <div class="row mt-4">
+            <div class="col">
+                <!-- Botón para guardar cambios -->
+                <button type="submit" class="btn btn-custom" name="action" value="save_changes">💾 Guardar Cambios
+                </button>
             </div>
 
-            <!-- Botones para Guardar y Cancelar -->
-            <div class="row mt-4">
-                <div class="col-6">
-                    <!-- Botón para guardar cambios -->
-                    <button type="submit" class="btn btn-primary btn-save" name="action" value="save_changes">💾 Guardar Cambios</button>
-                </div>
-                <div class="col-6">
-                    <!-- Botón para cancelar -->
-                    <button type="submit" class="btn btn-danger" name="action" value="cancel_request">⚠️ Cancelar</button>
-                </div>
+            <div class="col-4">
+                <!-- Botón para cancelar -->
+                <button type="submit" class="btn btn-danger btn-close-custom" name="action" value="cancel_request">⚠️ Cancelar</button>
             </div>
-        
-            <!-- Botón Volver al Panel -->
-            <div class="d-grid gap-2 mt-4">
-                <a href="{% url 'releases:panel' %}" class="btn btn-back">🔙 Volver al Panel</a>
+        </div>
+
+        <!-- Botón Volver al Panel -->
+        <div class="d-grid gap-2 mt-4">
+            <a href="{% url 'releases:panel' %}" class="btn btn-back">🔙 Volver al Panel</a>
+        </div>
+    </form>
+</div>
+
+<!-- Modal para mostrar la imagen en grande -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalImageTitle">Imagen en grande</h5> <!-- Título dinámico -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        </form>
+            <div class="modal-body">
+                <img id="modalImage" src="" alt="Imagen en grande">
+            </div>
+        </div>
     </div>
+</div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Script para abrir el modal con la imagen -->
+<script>
+    document.querySelectorAll('.neumorphic-card img').forEach(img => {
+        img.addEventListener('click', function () {
+            const src = this.getAttribute('src');
+            const title = this.parentElement.querySelector('.card-title').textContent; // Obtener el título de la tarjeta (nombre de la imagen)
+
+            // Actualizar el src de la imagen en el modal
+            document.getElementById('modalImage').setAttribute('src', src);
+
+            // Actualizar el título del modal
+            document.getElementById('modalImageTitle').textContent = title;
+
+            // Mostrar el modal
+            const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+            imageModal.show();
+        });
+    });
+</script>
 </body>
 </html>
