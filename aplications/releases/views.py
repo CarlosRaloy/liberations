@@ -12,16 +12,20 @@ from django.forms import modelformset_factory
 
 
 def solicitudes_list_view(request):
-    solicitudes = ReleaseModel.objects.all()
+    # Obtener las solicitudes pendientes (drop = 0)
+    solicitudes_pendientes = ReleaseModel.objects.filter(drop=0)
 
-    # Calcular el tiempo transcurrido entre creación y modificación para cada solicitud
-    for solicitud in solicitudes:
+    # Obtener las solicitudes cerradas o canceladas (drop = 1 o 2)
+    solicitudes_cerradas_canceladas = ReleaseModel.objects.filter(drop__in=[1, 2])
+
+    # Calcular el tiempo transcurrido entre creación y modificación para cada solicitud cerrada o cancelada
+    for solicitud in solicitudes_cerradas_canceladas:
         time_diff = solicitud.updated_at - solicitud.created_at
         hours, remainder = divmod(time_diff.total_seconds(), 3600)
         minutes, seconds = divmod(remainder, 60)
         solicitud.time_diff_text = f"{int(hours)} hr {int(minutes)} min {int(seconds)} sec"
 
-    # Manejando el inicio de sesión y los formularios como antes
+    # Manejo de formulario de inicio de sesión
     if request.method == 'POST' and 'login' in request.POST:
         login_form = CustomAuthenticationForm(data=request.POST)
         if login_form.is_valid():
@@ -31,9 +35,10 @@ def solicitudes_list_view(request):
     else:
         login_form = CustomAuthenticationForm()
 
-    # Pasamos las solicitudes con el cálculo de tiempo transcurrido al contexto
+    # Pasamos las solicitudes filtradas y otros formularios al contexto
     return render(request, 'panel.html', {
-        'solicitudes': solicitudes,
+        'solicitudes_pendientes': solicitudes_pendientes,
+        'solicitudes_cerradas_canceladas': solicitudes_cerradas_canceladas,
         'release_form': ReleaseForm(),
         'delete_part_form': DeletePartForm(),
         'login_form': login_form,
