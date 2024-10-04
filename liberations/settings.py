@@ -15,12 +15,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-z1!n#wlp2#9dm%vpq)$gn9+&t4^^m6+8l8umj---1vi==efuzo"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG_DJ')
+DEBUG = os.getenv("DEBUG_DJ", "False") == "True"
 
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
 else:
-    ALLOWED_HOSTS = ['IP_SERVER', 'DOMAIN']
+    ALLOWED_HOSTS = [os.getenv("IP_SERVER"), os.getenv("DOMAIN")]
+
+CSRF_TRUSTED_ORIGINS = [
+    f"http://{os.getenv('IP_SERVER')}",
+    f"http://{os.getenv('DOMAIN')}"
+]
+
 
 
 
@@ -67,7 +73,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "liberations.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -100,6 +105,22 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+
+# Static Deploy productive
+
+STATIC_ROOT = (
+    BASE_DIR / 'staticfiles/'
+)
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
+
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
