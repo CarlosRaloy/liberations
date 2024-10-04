@@ -26,3 +26,17 @@ Los detalles incluyen:</br>
 Números de parte antes y después del cambio.</br>
 El tiempo estimado del cambio.</br>
 Ayudas visuales para entender el proceso.
+
+## Despliege de proyecto
+
+```
+sudo apt-get install supervisor
+```
+
+Tenemos que crear un archivo .env con las sig variables
+
+```bash
+DEBUG_DJ=
+DOMAIN=
+IP_SERVER=
+```
