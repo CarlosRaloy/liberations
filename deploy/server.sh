@@ -6,4 +6,4 @@ DJANGO_SETTINGS_MODULE=liberations.settings
 cd $DJANGODIR
 source venv/bin/activate
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
-exec python manage.py runserver 0:8000
+exec python manage.py runserver 10.150.4.250:8007

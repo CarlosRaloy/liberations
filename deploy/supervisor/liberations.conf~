@@ -1,0 +1,8 @@
+[program:liberaciones]
+command=/var/www/html/liberaciones/deploy/gunicorn.sh
+autostart=true
+autorestart=true
+stderr_logfile=/var/www/html/liberaciones/deploy/err.log
+stdout_logfile=/var/www/html/liberaciones/deploy/out.log
+user=odooapps
+environment=LANG=en_US.UTF-8,LC_ALL=en_US.UTF-8
